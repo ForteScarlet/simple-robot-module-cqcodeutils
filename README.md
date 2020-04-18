@@ -18,10 +18,13 @@ compile group: 'io.github.ForteScarlet.simple-robot-module', name: 'mod-cqcodeut
 
 ## **简介**
 提供单例工具类`CQDecoder`、`CQEncoder`、`KQCodeUtils`
+
 java中可通过`getInstance()`或`INSTANCE`获取
+
 kotlin中可作为`object`直接使用
 
 提供`KQCode`封装类，且提供与CQCode相互转化的方法。
+
 实现了`Map接口`与`CharSequence`接口。
 
 ## **文档**
