@@ -13,11 +13,11 @@
     <groupId>io.github.ForteScarlet.simple-robot-module</groupId>
     <artifactId>mod-cqcodeutils</artifactId>
 
-    <!-- 1.1-1.11  -->
-    <version>1.1-1.11</version>
+    <!-- 1.2-1.12  -->
+    <version>1.2-1.12</version>
 
     <properties>
-        <core.version>1.11.3</core.version>
+        <core.version>1.12.1</core.version>
         <kotlin.version>1.3.70</kotlin.version>
     </properties>
 

@@ -15,6 +15,7 @@ import java.util.*
 , -> &#44;
  */
 
+/** decoder */
 object CQDecoder {
 
     @JvmStatic
@@ -34,6 +35,7 @@ object CQDecoder {
                     ?.replace("&#44;", ",")
 }
 
+/** encoder */
 object CQEncoder {
 
     @JvmStatic
@@ -150,10 +152,10 @@ object KQCodeUtils {
                 list.add(text)
             }
             if (e != text.length - 1) {
-                if(e < 0){
-                    list.add(text.substring(le+1, text.length))
-                }else{
-                    list.add(text.substring(e+1, text.length))
+                if (e < 0) {
+                    list.add(text.substring(le + 1, text.length))
+                } else {
+                    list.add(text.substring(e + 1, text.length))
                 }
             }
             return list.toTypedArray()
@@ -168,10 +170,10 @@ object KQCodeUtils {
      */
     @JvmOverloads
     fun getCq(text: String?, index: Int = 0): String? {
-        if(text == null){
+        if (text == null) {
             return null
         }
-        if(index < 0){
+        if (index < 0) {
             throw IndexOutOfBoundsException("$index")
         }
 
@@ -183,18 +185,18 @@ object KQCodeUtils {
 
         do {
             ti = text.indexOf(het, e)
-            if(ti >= 0){
+            if (ti >= 0) {
                 e = text.indexOf(ent, ti)
-                if(e >= 0){
+                if (e >= 0) {
                     i++
-                }else{
-                    e = ti+1
+                } else {
+                    e = ti + 1
                 }
             }
-        }while( ti >= 0 && i < index )
-        return if(i == index){
-            text.substring(ti, e+1)
-        }else{
+        } while (ti >= 0 && i < index)
+        return if (i == index) {
+            text.substring(ti, e + 1)
+        } else {
             null
         }
     }
@@ -204,7 +206,7 @@ object KQCodeUtils {
      * @since 1.1-1.11
      */
     fun getCqs(text: String?): Array<String>? {
-        if(text == null){
+        if (text == null) {
             return null
         }
 
@@ -217,15 +219,15 @@ object KQCodeUtils {
 
         do {
             ti = text.indexOf(het, e)
-            if(ti >= 0){
+            if (ti >= 0) {
                 e = text.indexOf(ent, ti)
-                if(e >= 0){
-                    list.add(text.substring(ti, e+1))
-                }else{
-                    e = ti+1
+                if (e >= 0) {
+                    list.add(text.substring(ti, e + 1))
+                } else {
+                    e = ti + 1
                 }
             }
-        }while( ti >= 0 && e >= 0 )
+        } while (ti >= 0 && e >= 0)
 
         return list.toTypedArray()
     }
@@ -239,7 +241,7 @@ object KQCodeUtils {
      */
     @JvmOverloads
     fun getParam(text: String?, paramKey: String, index: Int = 0): String? {
-        if(text == null){
+        if (text == null) {
             return null
         }
 
@@ -252,30 +254,30 @@ object KQCodeUtils {
         var i = -1
         do {
             from = text.indexOf(cqHead, from + 1)
-            if(from >= 0){
+            if (from >= 0) {
                 // 寻找结尾
                 end = text.indexOf(cqEnd, from)
-                if(end >= 0){
+                if (end >= 0) {
                     i++
                 }
             }
-        }while (from >= 0 && i < index)
+        } while (from >= 0 && i < index)
 
         // 索引对上了
-        if(i == index){
+        if (i == index) {
             // 从from开始找参数
             val paramFind = ",$paramKey="
             val phi = text.indexOf(paramFind, from)
-            if(phi < 0){
+            if (phi < 0) {
                 return null
             }
             // 找到了之后，找下一个逗号，如果没有，就用最终结尾的位置
-            var pei = text.indexOf(",", phi+paramFind.length)
-            if(pei < 0 || pei > end){
+            var pei = text.indexOf(",", phi + paramFind.length)
+            if (pei < 0 || pei > end) {
                 pei = end
             }
             return text.substring(phi + paramFind.length, pei)
-        }else{
+        } else {
             return null
         }
     }
@@ -285,7 +287,7 @@ object KQCodeUtils {
      * @since 1.1-1.11
      */
     fun getCqIter(text: String?): Iterator<String>? {
-        if(text == null){
+        if (text == null) {
             return null
         }
         return CqIterator(text)
@@ -296,7 +298,7 @@ object KQCodeUtils {
      * 文本CQ码迭代器
      * @since 1.1-1.11
      */
-    class CqIterator(private val text: String): Iterator<String> {
+    class CqIterator(private val text: String) : Iterator<String> {
         private var i = -1
         private var ti = 0
         private var e = 0
@@ -309,22 +311,22 @@ object KQCodeUtils {
          * Returns `true` if the iteration has more elements.
          */
         override fun hasNext(): Boolean {
-            if(!get){
+            if (!get) {
                 return next != null
             }
             get = false
             do {
                 ti = text.indexOf(het, e)
-                if(ti >= 0){
+                if (ti >= 0) {
                     e = text.indexOf(ent, ti)
-                    if(e >= 0){
+                    if (e >= 0) {
                         i++
-                        next = text.substring(ti, e+1)
-                    }else{
-                        e = ti+1
+                        next = text.substring(ti, e + 1)
+                    } else {
+                        e = ti + 1
                     }
                 }
-            }while( next == null && (ti >= 0 && e >= 0) )
+            } while (next == null && (ti >= 0 && e >= 0))
 
             return next != null
         }
@@ -347,11 +349,11 @@ object KQCodeUtils {
      */
     fun getKqs(text: String?): Array<KQCode>? {
         val iter = getCqIter(text)
-        return if(iter != null){
+        return if (iter != null) {
             val list = mutableListOf<KQCode>()
             iter.forEach { list.add(KQCode.of(it)) }
             list.toTypedArray()
-        }else{
+        } else {
             null
         }
     }
@@ -362,53 +364,131 @@ object KQCodeUtils {
     @JvmOverloads
     fun getKq(text: String?, index: Int = 0): KQCode? {
         val cq = getCq(text, index)
-        return if(cq == null){
+        return if (cq == null) {
             return null
-        }else{
+        } else {
             KQCode.of(cq)
         }
     }
 
+    /**
+     * 移除CQ码，可指定类型
+     * 具体使用参考[remove] 和 [removeByType]
+     * @since 1.2-1.12
+     */
+    private fun removeCode(type: String, text: String?, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String? {
+        when {
+            text == null -> {
+                return null
+            }
+            text.isEmpty() -> {
+                return text
+            }
+            else -> {
+                val sb = StringBuilder(text.length)
+                // 移除所有的CQ码
+                val head = CQ_HEAD + type
+                val end = CQ_END
 
+                var hi: Int = -1
+                var ei = -1
+                var nextHi: Int
+                var sps = 0;
+                var sub: String
+                var next: Char
+
+                do {
+                    hi++
+                    hi = text.indexOf(head, hi)
+                    next = text[hi + head.length]
+                    // 下一个不是逗号或者结尾
+                    if(next != ',' && next.toString() != end){
+                        continue
+                    }
+                    if (hi >= 0) {
+                        // 有一个头
+                        // 寻找下一个尾
+                        ei = text.indexOf(end, hi)
+                        if (ei > 0) {
+                            // 有一个尾，看看下一个头是不是在下一个尾之后
+                            nextHi = text.indexOf(head, hi + 1)
+                            // 如果中间包着一个头，则这个头作为当前头
+                            if (nextHi in 0 until ei) {
+                                hi = nextHi
+                            }
+                            if (hi > 0) {
+                                if (sps > 0) {
+                                    sps++
+                                }
+                                sub = text.substring(sps, hi)
+                                if(!ignoreEmpty || (ignoreEmpty && sub.isNotBlank())){
+                                    if (trim) {
+                                        sub = sub.trim()
+                                    }
+                                    if (sb.isNotEmpty()) {
+                                        sb.append(delimiter)
+                                    }
+                                    sb.append(sub)
+                                }
+                                sps = ei
+                            }else if(hi == 0){
+                                sps = ei
+
+                            }
+                        }
+                    }
+                } while (hi >= 0 && ei > 0)
+
+                // 没有头了
+                if (sps != text.lastIndex) {
+                    sub = text.substring(sps + 1)
+                    if(!ignoreEmpty || (ignoreEmpty && sub.isNotBlank())){
+                        if (trim) {
+                            sub = sub.trim()
+                        }
+                        if (sb.isNotEmpty()) {
+                            sb.append(delimiter)
+                        }
+                        sb.append(sub)
+                    }
+                }
+
+                // 返回结果
+                return if (sb.isEmpty() && text.isNotEmpty()) {
+                    text
+                } else {
+                    sb.toString()
+                }
+            }
+        }
+    }
+
+    /**
+     * 移除字符串中的所有的CQ码，返回字符串
+     * 必须是完整的\[CQ...]
+     * @param type CQ码的类型
+     * @param text 文本正文
+     * @param trim 是否对文本执行trim，默认为true
+     * @param ignoreEmpty 如果字符为纯空白字符，是否忽略
+     * @param delimiter 切割字符串
+     */
+    @JvmOverloads
+    fun remove(text: String?, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String? = removeCode("", text, trim, ignoreEmpty, delimiter)
+
+    /**
+     * 移除某个类型的字符串中的所有的CQ码，返回字符串
+     * 必须是完整的\[CQ...]
+     * @param type CQ码的类型
+     * @param text 文本正文
+     * @param trim 是否对文本执行trim，默认为true
+     * @param ignoreEmpty 如果字符为纯空白字符，是否忽略
+     * @param delimiter 切割字符串
+     */
+    fun removeByType(type: String, text: String?, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = "") = removeCode(type ?: "", text, trim, ignoreEmpty, delimiter)
 
 
 }
 
-//fun main() {
-//    // CQCode length = 10000000, text length = 456666719
-//    // getParams: 166ms
-//    // getKq:     119ms
-//    // getParam(getCq) 107ms
-//    // getKqs:    内存溢出
-//    val times = 10000000
-//    val get = times / 2
-//    val sb = StringBuilder(times * 40)
-//    for (i in 0..times){
-//        sb.append("[CQ:at$i,at=at${i}_at,qq=at${i}_qq]")
-//    }
-//    val text = sb.toString()
-//
-//    println("生成完毕，总长度：${text.length}")
-//
-//    val s = System.currentTimeMillis()
-//
-//    // getParam
-////    val p = KQCodeUtils.getParam(text, "qq", get)
-//    // getKqs(text)!![get]["qq"]
-//    // getKq(text, get)!!["qq"]
-////    val p = KQCodeUtils.getKq(text, get)!!["qq"]
-//    // KQCodeUtils.getParam(KQCodeUtils.getCq(text, get), "qq") 107
-//    val p = KQCodeUtils.getParam(KQCodeUtils.getCq(text, get), "qq")
-//
-//    println("qq = $p")
-//
-//    println("time: ${System.currentTimeMillis() - s} ms")
-//}
 
-fun main() {
 
-    val kq = KQCode of "[CQ:at,qq=123456789]"
 
-    println(kq)
-
-}
