@@ -397,12 +397,16 @@ object KQCodeUtils {
                 var sub: String
                 var next: Char
 
+                if(text.length < head.length + end.length){
+                    return text
+                }
+
                 do {
                     hi++
                     hi = text.indexOf(head, hi)
                     next = text[hi + head.length]
-                    // 下一个不是逗号或者结尾
-                    if(next != ',' && next.toString() != end){
+                    // 如果text存在内容，则判断：下一个不是逗号或者结尾
+                    if(type.isNotEmpty() && (next != ',' && next.toString() != end)){
                         continue
                     }
                     if (hi >= 0) {
@@ -453,12 +457,13 @@ object KQCodeUtils {
                     }
                 }
 
-                // 返回结果
-                return if (sb.isEmpty() && text.isNotEmpty()) {
-                    text
-                } else {
-                    sb.toString()
-                }
+                return sb.toString()
+//                 返回结果
+//                return if (sb.isEmpty() && text.isNotEmpty()) {
+//                    text
+//                } else {
+//                    sb.toString()
+//                }
             }
         }
     }
@@ -484,6 +489,7 @@ object KQCodeUtils {
      * @param ignoreEmpty 如果字符为纯空白字符，是否忽略
      * @param delimiter 切割字符串
      */
+    @JvmOverloads
     fun removeByType(type: String, text: String?, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = "") = removeCode(type ?: "", text, trim, ignoreEmpty, delimiter)
 
 
