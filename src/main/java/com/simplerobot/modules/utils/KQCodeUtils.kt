@@ -169,7 +169,7 @@ object KQCodeUtils {
      * @since 1.1-1.11
      */
     @JvmOverloads
-    fun getCq(text: String?, index: Int = 0): String? {
+    fun getCq(text: String?, type: String = "", index: Int = 0): String? {
         if (text == null) {
             return null
         }
@@ -180,7 +180,7 @@ object KQCodeUtils {
         var i = -1
         var ti = 0
         var e = 0
-        val het = CQ_HEAD
+        val het = CQ_HEAD + type
         val ent = CQ_END
 
         do {
@@ -202,17 +202,27 @@ object KQCodeUtils {
     }
 
     /**
+     * 从消息字符串中提取出CQ码字符串
+     * @param text 消息字符串
+     * @param index 第几个索引位的CQ码，默认为0，即第一个
+     * @since 1.1-1.11
+     */
+//    @JvmOverloads
+    fun getCq(text: String?, index: Int = 0): String? = getCq(text = text, type = "", index = index)
+
+    /**
      * 提取字符串中的全部CQ码字符串
      * @since 1.1-1.11
      */
-    fun getCqs(text: String?): Array<String>? {
+    @JvmOverloads
+    fun getCqs(text: String?, type: String = ""): Array<String>? {
         if (text == null) {
             return null
         }
 
         var ti = 0
         var e = 0
-        val het = CQ_HEAD
+        val het = CQ_HEAD + type
         val ent = CQ_END
         // temp list
         val list = mutableListOf<String>()
@@ -286,11 +296,12 @@ object KQCodeUtils {
      * 获取文本字符串中CQ码字符串的迭代器
      * @since 1.1-1.11
      */
-    fun getCqIter(text: String?): Iterator<String>? {
+    @JvmOverloads
+    fun getCqIter(text: String?, type: String = ""): Iterator<String>? {
         if (text == null) {
             return null
         }
-        return CqIterator(text)
+        return CqIterator(text, type)
     }
 
 
@@ -298,11 +309,11 @@ object KQCodeUtils {
      * 文本CQ码迭代器
      * @since 1.1-1.11
      */
-    class CqIterator(private val text: String) : Iterator<String> {
+    class CqIterator(private val text: String, private val type: String = "") : Iterator<String> {
         private var i = -1
         private var ti = 0
         private var e = 0
-        private val het = CQ_HEAD
+        private val het = CQ_HEAD + type
         private val ent = CQ_END
         private var next: String? = null
         private var get = true
@@ -347,8 +358,9 @@ object KQCodeUtils {
      * 以[getCqIter]方法为基础获取字符串中全部的Kqs对象
      * @since 1.1-1.11
      */
-    fun getKqs(text: String?): Array<KQCode>? {
-        val iter = getCqIter(text)
+    @JvmOverloads
+    fun getKqs(text: String?, type: String = ""): Array<KQCode>? {
+        val iter = getCqIter(text, type)
         return if (iter != null) {
             val list = mutableListOf<KQCode>()
             iter.forEach { list.add(KQCode.of(it)) }
@@ -362,14 +374,19 @@ object KQCodeUtils {
      * 获取指定索引位的cq码，并封装类KQ对象
      */
     @JvmOverloads
-    fun getKq(text: String?, index: Int = 0): KQCode? {
-        val cq = getCq(text, index)
+    fun getKq(text: String?, type: String = "", index: Int = 0): KQCode? {
+        val cq = getCq(text, type, index)
         return if (cq == null) {
             return null
         } else {
             KQCode.of(cq)
         }
     }
+
+    /**
+     * 获取指定索引位的cq码，并封装类KQ对象
+     */
+    fun getKq(text: String?, index: Int = 0): KQCode? = getKq(text = text, type = "", index = index)
 
     /**
      * 移除CQ码，可指定类型

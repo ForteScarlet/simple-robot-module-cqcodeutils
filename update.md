@@ -1,5 +1,8 @@
 
-# now
+# 1.2.1-1.12
+修复remove的bug
+
+# 1.2-1.12
 KQCode的两个of方法支持infix调用，例如 KQCode of "\[CQ:at,qq=123456]"
 KQCodeUtils增加`remove`方法和`removeByType`方法, 用来移除文本中的CQ码。
 顺手更新一下核心
