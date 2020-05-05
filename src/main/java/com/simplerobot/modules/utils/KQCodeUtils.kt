@@ -249,13 +249,22 @@ object KQCodeUtils {
      * 默认情况下获取第一个CQ码的参数
      * @since 1.1-1.11
      */
+    fun getParam(text: String?, paramKey: String, index: Int = 0): String? = getParam(text = text, paramKey = paramKey, type = "", index = index)
+
+    /**
+     * 获取文本中的CQ码的参数。
+     * 如果文本为null、找不到对应索引的CQ码、找不到此key，返回null；如果找到了key但是无参数，返回空字符串
+     *
+     * 默认情况下获取第一个CQ码的参数
+     * @since 1.1-1.11
+     */
     @JvmOverloads
-    fun getParam(text: String?, paramKey: String, index: Int = 0): String? {
+    fun getParam(text: String?, paramKey: String, type: String = "", index: Int = 0): String? {
         if (text == null) {
             return null
         }
 
-        val cqHead = CQ_HEAD
+        val cqHead = CQ_HEAD + type
         val cqEnd = CQ_END
         val cqSpl = CQ_SPLIT
 
@@ -282,11 +291,16 @@ object KQCodeUtils {
                 return null
             }
             // 找到了之后，找下一个逗号，如果没有，就用最终结尾的位置
-            var pei = text.indexOf(",", phi + paramFind.length)
+            val startIndex = phi + paramFind.length
+            var pei = text.indexOf(cqSpl, startIndex)
+            // 超出去了
             if (pei < 0 || pei > end) {
                 pei = end
             }
-            return text.substring(phi + paramFind.length, pei)
+            if(startIndex > text.lastIndex || startIndex > pei){
+                return null
+            }
+            return text.substring(startIndex, pei)
         } else {
             return null
         }
