@@ -1,8 +1,5 @@
 package com.simplerobot.modules.utils
 
-import java.lang.IllegalArgumentException
-import java.util.*
-
 
 /**
  * CQ码封装类Kt

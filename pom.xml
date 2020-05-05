@@ -35,22 +35,8 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-stdlib</artifactId>
-                </exclusion>
-            </exclusions>
-            <!-- 依赖可选，即禁止传递 -->
-            <optional>true</optional>
         </dependency>
 
-        <!-- kt的stdlib是必须的 -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
