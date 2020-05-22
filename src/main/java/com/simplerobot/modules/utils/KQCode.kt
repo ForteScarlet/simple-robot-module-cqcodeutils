@@ -5,7 +5,7 @@ package com.simplerobot.modules.utils
  * CQ码封装类Kt
  * @since 1.0-1.11
  */
-class KQCode
+open class KQCode
 private constructor(private val params: MutableMap<String, String>, var type: String) :
         CharSequence,
         MutableMap<String, String> by params {

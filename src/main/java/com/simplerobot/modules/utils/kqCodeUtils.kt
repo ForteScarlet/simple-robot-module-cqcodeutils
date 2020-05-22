@@ -130,9 +130,9 @@ object KQCodeUtils {
                     le = e
                 }
                 e = text.indexOf(ent, h)
-                if (e < 0) {
+                h = if (e < 0) {
                     // 没找到，查找下一个[CQ:
-                    h = text.indexOf(het, h + 1)
+                    text.indexOf(het, h + 1)
                 } else {
                     // 找到了，截取。
                     // 首先截取前一段
@@ -142,7 +142,7 @@ object KQCodeUtils {
                     // 截取cq码
                     list.add(text.substring(h, e + 1))
                     // 重新查询
-                    h = text.indexOf(het, e)
+                    text.indexOf(het, e)
                 }
             }
             if (list.isEmpty()) {
@@ -175,7 +175,7 @@ object KQCodeUtils {
         }
 
         var i = -1
-        var ti = 0
+        var ti: Int
         var e = 0
         val het = CQ_HEAD + type
         val ent = CQ_END
@@ -320,7 +320,7 @@ object KQCodeUtils {
      * 文本CQ码迭代器
      * @since 1.1-1.11
      */
-    class CqIterator(private val text: String, private val type: String = "") : Iterator<String> {
+    internal class CqIterator(private val text: String, private val type: String = "") : Iterator<String> {
         private var i = -1
         private var ti = 0
         private var e = 0
@@ -484,14 +484,7 @@ object KQCodeUtils {
                         sb.append(sub)
                     }
                 }
-
                 return sb.toString()
-//                 返回结果
-//                return if (sb.isEmpty() && text.isNotEmpty()) {
-//                    text
-//                } else {
-//                    sb.toString()
-//                }
             }
         }
     }
