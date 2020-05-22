@@ -16,7 +16,7 @@ package com.simplerobot.modules.utils
 object CQDecoder {
 
     @JvmStatic
-    val instance = CQDecoder
+    val instance = this
 
     /** 非CQ码文本消息解义 */
     fun decodeText(str: String?) =
@@ -36,7 +36,7 @@ object CQDecoder {
 object CQEncoder {
 
     @JvmStatic
-    val instance = CQEncoder
+    val instance = this
 
     /** 非CQ码文本消息转义 */
     fun encodeText(str: String?) =
@@ -67,7 +67,7 @@ object KQCodeUtils {
     private const val CQ_KV = "="
 
     @JvmStatic
-    val instance = KQCodeUtils
+    val instance = this
 
     /**
      * 将参数转化为CQ码字符串

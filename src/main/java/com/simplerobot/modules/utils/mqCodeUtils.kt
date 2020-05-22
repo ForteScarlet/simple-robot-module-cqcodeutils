@@ -16,6 +16,9 @@ import java.lang.IllegalArgumentException
  * @since
  */
 object MQCodeUtils {
+    @JvmStatic
+    val instance = this
+
     private const val MQ_HEAD = "[mirai:"
     private const val MQ_END = "]"
     private const val MQ_KV = ":"
