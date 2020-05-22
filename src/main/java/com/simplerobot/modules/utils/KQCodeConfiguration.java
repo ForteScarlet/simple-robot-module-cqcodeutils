@@ -23,5 +23,9 @@ public class KQCodeConfiguration {
         return CQEncoder.INSTANCE;
     }
 
+    @Beans("mqCodeUtils")
+    public MQCodeUtils getMQCodeUtils() {
+        return MQCodeUtils.INSTANCE;
+    }
 
 }
