@@ -241,9 +241,7 @@ object MQCodeUtils {
             list.add(text)
         }
         if (e != text.length - 1) {
-            if (e < 0) {
-                list.add(text.substring(le + 1, text.length))
-            } else {
+            if (e >= 0) {
                 list.add(text.substring(e + 1, text.length))
             }
         }

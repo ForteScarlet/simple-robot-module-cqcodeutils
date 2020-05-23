@@ -1,6 +1,9 @@
 
+# 1.4.1-1.13
+修复`split(...)`方法的bug
+
 # 1.4-1.13
-追加`MQCodeUtils`以支持对Mirai码(Mirai的Message的`toString()`结果中包含的Mirai特殊字符串)的简易解析与支持。
+追加`MQCodeUtils`以支持对Mirai码的简易解析与支持。
 增加一些针对参数的空值判断
 
 # 1.3-1.12
