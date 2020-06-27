@@ -1,28 +1,34 @@
+@file:Suppress("unused")
+
 package com.simplerobot.modules.utils
 
 
 /**
  * CQ码封装类Kt
+ *
+ * 1.5.0-1.15 更新为map不可变状态。对应可变子类为[MutableKQCode]
  * @since 1.0-1.11
  */
 open class KQCode
-private constructor(private val params: MutableMap<String, String>, var type: String) :
+protected constructor(open val params: Map<String, String>, var type: String) :
         CharSequence,
-        MutableMap<String, String> by params {
-    constructor(type: String): this(mutableMapOf(), type)
-    constructor(type: String, params: MutableMap<String, String>): this(params.toMutableMap(), type)
-    constructor(type: String, vararg params: Pair<String, String>): this(mutableMapOf(*params), type)
-    constructor(type: String, vararg params: Map.Entry<String, Any>): this(mutableMapOf(*params.map { it.key to it.value.toString() }.toTypedArray()), type)
-    constructor(type: String, vararg params: String): this(mutableMapOf(*params.map {
+        Map<String, String> by params {
+    constructor(type: String): this(mapOf(), type)
+    constructor(type: String, params: Map<String, String>): this(params.toMap(), type)
+    constructor(type: String, vararg params: Pair<String, String>): this(mapOf(*params), type)
+    constructor(type: String, vararg params: String): this(mapOf(*params.map {
         val split = it.split(Regex("="), 2)
         split[0] to split[1]
     }.toTypedArray()), type)
+    /** internal constructor for mutable kqCode */
+    internal constructor(mutableKQCode: MutableKQCode): this(mutableKQCode.params.toMap(), mutableKQCode.type)
 
     /**
      * Returns the length of this character sequence.
      */
     override val length: Int
         get() = toString().length
+
 
     /**
      * 获取转义后的字符串
@@ -55,9 +61,23 @@ private constructor(private val params: MutableMap<String, String>, var type: St
             = com.forte.qqrobot.beans.cqcode.CQCode.of(type, mutableMapOf(*params.entries.map { it.key to CQEncoder.encodeParams(it.value) }.toTypedArray()))
 
 
+    /**
+     * plus for other
+     */
+    operator fun plus(other: CharSequence): Msgs = Msgs(collection = listOf(this, other))
+
+    /**
+     * 转化为参数可变的[MutableKQCode]
+     */
+    open fun mutable(): MutableKQCode = MutableKQCode(this)
+
+    /**
+     * 转化为不可变类型[KQCode]
+     */
+    open fun immutable(): KQCode = this
+
+
     companion object {
-
-
         /**
          * 从cq码字符串转到KQCode
          * @since 1.1-1.11
@@ -105,10 +125,13 @@ private constructor(private val params: MutableMap<String, String>, var type: St
             get() = plist.last()
             set(value) { plist.add(value) }
 
+        operator fun set(param: String, value: String) {
+            this.param = param to value
+        }
 
         /** 添加全部 */
-        open fun addTo(kqCode: KQCode): KQCode{
-            kqCode.putAll(plist)
+        open fun addTo(kqCode: KQCode): KQCode {
+            kqCode.mutable().putAll(plist)
             return kqCode
         }
 
@@ -121,7 +144,7 @@ private constructor(private val params: MutableMap<String, String>, var type: St
      */
     class Builder {
         var type: String = ""
-        val _params = Params()
+        internal val _params = Params()
         var param: Pair<String, String>
             get() = _params.param
             set(value) { _params.param = value }
@@ -133,11 +156,42 @@ private constructor(private val params: MutableMap<String, String>, var type: St
         }
 
         override fun toString(): String = "$type:$_params"
-
-
     }
 
 }
+
+/**
+ * [KQCode]对应的可变类型
+ */
+@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+open class MutableKQCode
+protected constructor(override val params: MutableMap<String, String>, type: String): KQCode(params, type), MutableMap<String, String> by params {
+    constructor(type: String): this(mutableMapOf(), type)
+    constructor(type: String, params: Map<String, String>): this(params.toMutableMap(), type)
+    constructor(type: String, vararg params: Pair<String, String>): this(mutableMapOf(*params), type)
+    constructor(type: String, vararg params: String): this(mutableMapOf(*params.map {
+        val split = it.split(Regex("="), 2)
+        split[0] to split[1]
+    }.toTypedArray()), type)
+    /** internal constructor for kqCode */
+    internal constructor(kqCode: KQCode): this(kqCode.params.toMutableMap(), kqCode.type)
+
+    /**
+     * 转化为参数可变的[MutableKQCode]
+     */
+    override fun mutable(): MutableKQCode = this
+
+    /**
+     * 转化为不可变类型[KQCode]
+     */
+    override fun immutable(): KQCode = KQCode(this)
+
+}
+
+
+
+
+
 
 
 /**

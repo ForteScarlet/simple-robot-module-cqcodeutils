@@ -1,0 +1,550 @@
+package com.simplerobot.modules.utils
+
+/**
+ * 定义特殊码的一些模板方法，例如at等。
+ * 返回值类型全部相同
+ * 主要基于cq码规范定义。
+ */
+interface CodeTemplate<T> {
+    /**
+     * at别人
+     * @see at
+     */
+    @JvmDefault fun at(code: Long): T = at(code.toString())
+
+    /**
+     * at别人
+     */
+    fun at(code: String): T
+
+    /**
+     * at所有人
+     */
+    fun atAll(): T
+
+    /**
+     * face
+     */
+    fun face(id: String): T
+    @JvmDefault fun face(id: Long): T = face(id.toString())
+
+    /**
+     * big face
+     */
+    fun bface(id: String): T
+    @JvmDefault fun bface(id: Long): T = bface(id.toString())
+
+    /**
+     * small face
+     */
+    fun sface(id: String): T
+    @JvmDefault fun sface(id: Long): T = sface(id.toString())
+
+    /**
+     * image
+     * @param id id
+     * @param destruct 闪图
+     */
+    fun image(id: String, destruct: Boolean): T
+    @JvmDefault fun image(id: String): T = image(id, false)
+
+
+    /**
+     * 语言
+     * [CQ:record,file={1},magic={2}] - 发送语音
+     * {1}为音频文件名称，音频存放在酷Q目录的data\record\下
+     * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
+     * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
+     */
+    fun record(id: String, magic: Boolean): T
+    @JvmDefault fun record(id: String): T = record(id, false)
+
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    fun rps(): T
+    fun rps(type: String): T
+    @JvmDefault fun rps(type: Int) = rps(type.toString())
+
+
+    /**
+     * 骰子
+     * [CQ:dice,type={1}] - 发送掷骰子魔法表情
+     * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     */
+    fun dice(): T
+    fun dice(type: String): T
+    @JvmDefault fun dice(type: Int) = dice(type.toString())
+
+    /**
+     * 戳一戳（原窗口抖动，仅支持好友消息使用）
+     */
+    fun shake(): T
+
+    /**
+     * 匿名消息
+     * [CQ:anonymous,ignore={1}] - 匿名发消息（仅支持群消息使用）
+     * 本CQ码需加在消息的开头。
+     * 当{1}为true时，代表不强制使用匿名，如果匿名失败将转为普通消息发送。
+     * 当{1}为false或ignore参数被忽略时，代表强制使用匿名，如果匿名失败将取消该消息的发送。
+     * 举例：
+     * [CQ:anonymous,ignore=true]
+     * [CQ:anonymous]
+     */
+    fun anonymous(ignore: Boolean): T
+    @JvmDefault fun anonymous(): T = anonymous(false)
+
+    /**
+     * 音乐
+     * [CQ:music,type={1},id={2},style={3}]
+     * {1} 音乐平台类型，目前支持qq、163
+     * {2} 对应音乐平台的数字音乐id
+     * {3} 音乐卡片的风格。仅 Pro 支持该参数，该参数可被忽略。
+     * 注意：音乐只能作为单独的一条消息发送
+     * 例子
+     * [CQ:music,type=qq,id=422594]（发送一首QQ音乐的“Time after time”歌曲到群内）
+     * [CQ:music,type=163,id=28406557]（发送一首网易云音乐的“桜咲く”歌曲到群内）
+     */
+    fun music(type: String, id: String, style: String?): T
+    @JvmDefault fun music(type: String, id: String): T = music(type, id, null)
+
+    /**
+     * [CQ:music,type=custom,url={1},audio={2},title={3},content={4},image={5}] - 发送音乐自定义分享
+     * 注意：音乐自定义分享只能作为单独的一条消息发送
+     * @param url   {1}为分享链接，即点击分享后进入的音乐页面（如歌曲介绍页）。
+     * @param audio {2}为音频链接（如mp3链接）。
+     * @param title  {3}为音乐的标题，建议12字以内。
+     * @param content  {4}为音乐的简介，建议30字以内。该参数可被忽略。
+     * @param image  {5}为音乐的封面图片链接。若参数为空或被忽略，则显示默认图片。
+     *
+     */
+    fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): T
+    @JvmDefault fun customMusic(url: String, audio: String, title: String): T = customMusic(url, audio, title, null, null)
+
+
+    /**
+     * [CQ:share,url={1},title={2},content={3},image={4}] - 发送链接分享
+     * {1}为分享链接。
+     * {2}为分享的标题，建议12字以内。
+     * {3}为分享的简介，建议30字以内。该参数可被忽略。
+     * {4}为分享的图片链接。若参数为空或被忽略，则显示默认图片。
+     * 注意：链接分享只能作为单独的一条消息发送
+     */
+    fun share(url: String, title: String, content: String?, image: String?): T
+    @JvmDefault fun share(url: String, title: String): T = share(url, title, null, null)
+
+
+    /**
+     * 地点
+     * [CQ:location,lat={1},lon={2},title={3},content={4}]
+     * {1} 纬度
+     * {2} 经度
+     * {3} 分享地点的名称
+     * {4} 分享地点的具体地址
+     */
+    fun location(lat: String, lon: String, title: String, content: String): T
+
+
+}
+
+
+//**************************************
+//*         String template
+//**************************************
+
+
+
+/**
+ * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
+ */
+object KQCodeStringTemplate: CodeTemplate<String> {
+    private val utils: KQCodeUtils = KQCodeUtils
+    private const val AT_ALL: String = "[CQ:at,qq=all]"
+    /**
+     * at别人
+     */
+    override fun at(code: String): String = utils.toCq("at", "qq" to code)
+
+    /**
+     * at所有人
+     */
+    override fun atAll(): String = AT_ALL
+
+    /**
+     * face
+     */
+    override fun face(id: String): String = utils.toCq("face", "id" to id)
+
+    /**
+     * big face
+     */
+    override fun bface(id: String): String = utils.toCq("bface", "id" to id)
+
+    /**
+     * small face
+     */
+    override fun sface(id: String): String = utils.toCq("sface", "id" to id)
+
+    /**
+     * image
+     * @param id id
+     * @param destruct true=闪图
+     */
+    override fun image(id: String, destruct: Boolean): String  = utils.toCq("image", "file" to id, "destruct" to destruct)
+
+
+    /**
+     * 语言
+     * [CQ:record,file={1},magic={2}] - 发送语音
+     * {1}为音频文件名称，音频存放在酷Q目录的data\record\下
+     * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
+     * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
+     */
+    override fun record(id: String, magic: Boolean): String = utils.toCq("record", "file" to id, "magic" to magic)
+
+
+    /**
+     * const val for rps
+     */
+    private const val RPS = "[CQ:rps]"
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    override fun rps(): String = RPS
+
+
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    override fun rps(type: String): String = utils.toCq("rps", "type" to type)
+
+    /**
+     * const val for dice
+     */
+    private const val DICE = "[CQ:dice]"
+
+    /**
+     * 骰子
+     * [CQ:dice,type={1}] - 发送掷骰子魔法表情
+     * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     */
+    override fun dice(): String = DICE
+
+
+    /**
+     * 骰子
+     * [CQ:dice,type={1}] - 发送掷骰子魔法表情
+     * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     */
+    override fun dice(type: String): String = utils.toCq("dice", "type" to type)
+
+
+    /**
+     * const val for shake
+     */
+    private const val SHAKE = "[CQ:shake]"
+
+    /**
+     * 戳一戳（原窗口抖动，仅支持好友消息使用）
+     */
+    override fun shake(): String = SHAKE
+
+
+    /**
+     * 匿名消息
+     * [CQ:anonymous,ignore={1}] - 匿名发消息（仅支持群消息使用）
+     * 本CQ码需加在消息的开头。
+     * 当{1}为true时，代表不强制使用匿名，如果匿名失败将转为普通消息发送。
+     * 当{1}为false或ignore参数被忽略时，代表强制使用匿名，如果匿名失败将取消该消息的发送。
+     * 举例：
+     * [CQ:anonymous,ignore=true]
+     * [CQ:anonymous]
+     */
+    override fun anonymous(ignore: Boolean): String = utils.toCq("anonymous", "ignore" to ignore)
+
+
+    /**
+     * 音乐
+     * [CQ:music,type={1},id={2},style={3}]
+     * {1} 音乐平台类型，目前支持qq、163
+     * {2} 对应音乐平台的数字音乐id
+     * {3} 音乐卡片的风格。仅 Pro 支持该参数，该参数可被忽略。
+     * 注意：音乐只能作为单独的一条消息发送
+     * 例子
+     * [CQ:music,type=qq,id=422594]（发送一首QQ音乐的“Time after time”歌曲到群内）
+     * [CQ:music,type=163,id=28406557]（发送一首网易云音乐的“桜咲く”歌曲到群内）
+     */
+    override fun music(type: String, id: String, style: String?): String {
+        return if (style != null) {
+            utils.toCq("music", "type" to type, "id" to id, "style" to style)
+        }else{
+            utils.toCq("music", "type" to type, "id" to id)
+        }
+    }
+
+    /**
+     * [CQ:music,type=custom,url={1},audio={2},title={3},content={4},image={5}] - 发送音乐自定义分享
+     * 注意：音乐自定义分享只能作为单独的一条消息发送
+     * @param url   {1}为分享链接，即点击分享后进入的音乐页面（如歌曲介绍页）。
+     * @param audio {2}为音频链接（如mp3链接）。
+     * @param title  {3}为音乐的标题，建议12字以内。
+     * @param content  {4}为音乐的简介，建议30字以内。该参数可被忽略。
+     * @param image  {5}为音乐的封面图片链接。若参数为空或被忽略，则显示默认图片。
+     *
+     */
+    override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): String {
+        return if(content != null && image != null){
+            utils.toCq("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
+        }else{
+            val list: MutableList<Pair<String, Any>> = mutableListOf("type" to "custom", "url" to url, "audio" to audio, "title" to title)
+            content?.run {
+                list.add("content" to this)
+            }
+            image?.run {
+                list.add("image" to this)
+            }
+            utils.toCq("music", *list.toTypedArray())
+        }
+    }
+
+    /**
+     * [CQ:share,url={1},title={2},content={3},image={4}] - 发送链接分享
+     * {1}为分享链接。
+     * {2}为分享的标题，建议12字以内。
+     * {3}为分享的简介，建议30字以内。该参数可被忽略。
+     * {4}为分享的图片链接。若参数为空或被忽略，则显示默认图片。
+     * 注意：链接分享只能作为单独的一条消息发送
+     */
+    override fun share(url: String, title: String, content: String?, image: String?): String {
+        return if(content != null && image != null){
+            utils.toCq("share", "url" to url, "title" to title, "content" to content, "image" to image)
+        }else{
+            val list: MutableList<Pair<String, Any>> = mutableListOf("url" to url, "title" to title)
+            content?.run {
+                list.add("content" to this)
+            }
+            image?.run {
+                list.add("image" to this)
+            }
+            utils.toCq("share", *list.toTypedArray())
+        }
+    }
+
+    /**
+     * 地点
+     * [CQ:location,lat={1},lon={2},title={3},content={4}]
+     * {1} 纬度
+     * {2} 经度
+     * {3} 分享地点的名称
+     * {4} 分享地点的具体地址
+     */
+    override fun location(lat: String, lon: String, title: String, content: String): String = utils.toCq("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+}
+
+
+
+//**************************************
+//*         KQ template
+//**************************************
+
+
+
+/**
+ * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
+ */
+object KQCodeTemplate: CodeTemplate<KQCode> {
+    private val AT_ALL: KQCode get() = KQCode("at", "qq" to "all")
+    /**
+     * at别人
+     */
+    override fun at(code: String): KQCode = KQCode("at", "qq" to code)
+
+    /**
+     * at所有人
+     */
+    override fun atAll(): KQCode = AT_ALL
+
+    /**
+     * face
+     */
+    override fun face(id: String): KQCode = KQCode("face", "id" to id)
+
+    /**
+     * big face
+     */
+    override fun bface(id: String): KQCode = KQCode("bface", "id" to id)
+
+    /**
+     * small face
+     */
+    override fun sface(id: String): KQCode = KQCode("sface", "id" to id)
+
+    /**
+     * image
+     * @param id id
+     * @param destruct true=闪图
+     */
+    override fun image(id: String, destruct: Boolean): KQCode  = KQCode("image", "file" to id, "destruct" to destruct.toString())
+
+
+    /**
+     * 语言
+     * [CQ:record,file={1},magic={2}] - 发送语音
+     * {1}为音频文件名称，音频存放在酷Q目录的data\record\下
+     * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
+     * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
+     */
+    override fun record(id: String, magic: Boolean): KQCode = KQCode("record", "file" to id, "magic" to magic.toString())
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    override fun rps(): KQCode = KQCode("rps")
+
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    override fun rps(type: String): KQCode = KQCode("rps", "type" to type)
+
+    /**
+     * 骰子
+     * [CQ:dice,type={1}] - 发送掷骰子魔法表情
+     * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     */
+    override fun dice(): KQCode = KQCode("dice")
+
+
+    /**
+     * 骰子
+     * [CQ:dice,type={1}] - 发送掷骰子魔法表情
+     * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     */
+    override fun dice(type: String): KQCode = KQCode("dice", "type" to type)
+
+
+    /**
+     * 戳一戳（原窗口抖动，仅支持好友消息使用）
+     */
+    override fun shake(): KQCode = KQCode("shake")
+
+
+    /**
+     * 匿名消息
+     * [CQ:anonymous,ignore={1}] - 匿名发消息（仅支持群消息使用）
+     * 本CQ码需加在消息的开头。
+     * 当{1}为true时，代表不强制使用匿名，如果匿名失败将转为普通消息发送。
+     * 当{1}为false或ignore参数被忽略时，代表强制使用匿名，如果匿名失败将取消该消息的发送。
+     * 举例：
+     * [CQ:anonymous,ignore=true]
+     * [CQ:anonymous]
+     */
+    override fun anonymous(ignore: Boolean): KQCode = KQCode("anonymous", "ignore" to ignore.toString())
+
+
+    /**
+     * 音乐
+     * [CQ:music,type={1},id={2},style={3}]
+     * {1} 音乐平台类型，目前支持qq、163
+     * {2} 对应音乐平台的数字音乐id
+     * {3} 音乐卡片的风格。仅 Pro 支持该参数，该参数可被忽略。
+     * 注意：音乐只能作为单独的一条消息发送
+     * 例子
+     * [CQ:music,type=qq,id=422594]（发送一首QQ音乐的“Time after time”歌曲到群内）
+     * [CQ:music,type=163,id=28406557]（发送一首网易云音乐的“桜咲く”歌曲到群内）
+     */
+    override fun music(type: String, id: String, style: String?): KQCode {
+        return if (style != null) {
+            KQCode("music", "type" to type, "id" to id, "style" to style)
+        }else{
+            KQCode("music", "type" to type, "id" to id)
+        }
+    }
+
+    /**
+     * [CQ:music,type=custom,url={1},audio={2},title={3},content={4},image={5}] - 发送音乐自定义分享
+     * 注意：音乐自定义分享只能作为单独的一条消息发送
+     * @param url   {1}为分享链接，即点击分享后进入的音乐页面（如歌曲介绍页）。
+     * @param audio {2}为音频链接（如mp3链接）。
+     * @param title  {3}为音乐的标题，建议12字以内。
+     * @param content  {4}为音乐的简介，建议30字以内。该参数可被忽略。
+     * @param image  {5}为音乐的封面图片链接。若参数为空或被忽略，则显示默认图片。
+     *
+     */
+    override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): KQCode {
+        return if(content != null && image != null){
+            KQCode("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
+        }else{
+            val list: MutableList<Pair<String, String>> = mutableListOf("type" to "custom", "url" to url, "audio" to audio, "title" to title)
+            content?.run {
+                list.add("content" to this)
+            }
+            image?.run {
+                list.add("image" to this)
+            }
+            KQCode("music", *list.toTypedArray())
+        }
+    }
+
+    /**
+     * [CQ:share,url={1},title={2},content={3},image={4}] - 发送链接分享
+     * {1}为分享链接。
+     * {2}为分享的标题，建议12字以内。
+     * {3}为分享的简介，建议30字以内。该参数可被忽略。
+     * {4}为分享的图片链接。若参数为空或被忽略，则显示默认图片。
+     * 注意：链接分享只能作为单独的一条消息发送
+     */
+    override fun share(url: String, title: String, content: String?, image: String?): KQCode {
+        return if(content != null && image != null){
+            KQCode("share", "url" to url, "title" to title, "content" to content, "image" to image)
+        }else{
+            val list: MutableList<Pair<String, String>> = mutableListOf("url" to url, "title" to title)
+            content?.run {
+                list.add("content" to this)
+            }
+            image?.run {
+                list.add("image" to this)
+            }
+            KQCode("share", *list.toTypedArray())
+        }
+    }
+
+    /**
+     * 地点
+     * [CQ:location,lat={1},lon={2},title={3},content={4}]
+     * {1} 纬度
+     * {2} 经度
+     * {3} 分享地点的名称
+     * {4} 分享地点的具体地址
+     */
+    override fun location(lat: String, lon: String, title: String, content: String): KQCode = KQCode("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+}
+

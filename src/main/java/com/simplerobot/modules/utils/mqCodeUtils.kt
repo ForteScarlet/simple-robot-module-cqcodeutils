@@ -431,13 +431,48 @@ object MQCodeUtils {
 }
 
 
-/** MQ code 封装数据类。 */
-data class MQCode(val type: String, val param: String) {
-    override fun toString(): String = "[mirai:$type:$param]"
+/** MQ code 封装数据类。
+ * 参数不可变的数据类。
+ *
+ */
+data class MQCode(val type: String, val param: String): CharSequence {
+
+    /**
+     * string value
+     */
+    private val value: String
+    get() = "[mirai:$type:$param]"
+
+
+    override fun toString(): String = value
+
     /**
      * 转化为KQCode对象。
      */
     fun toKQCode() = KQCode(type, type to param)
+
+    /**
+     * Returns the length of this character sequence.
+     */
+    override val length: Int
+        get() = value.length
+
+
+    /**
+     * get char from string
+     * @see value
+     * @see toString
+     * @see CharSequence.get
+     */
+    override operator fun get(index: Int): Char = value[index]
+
+    /**
+     * sub sequence
+     * @see value
+     * @see toString
+     * @see CharSequence.subSequence
+     */
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = value.subSequence(startIndex, endIndex)
 }
 
 

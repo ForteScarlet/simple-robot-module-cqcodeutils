@@ -54,6 +54,10 @@ object CQEncoder {
 
 }
 
+
+
+
+
 /**
  * CQ码的操作工具类
  * 相对于[com.forte.qqrobot.utils.CQCodeUtil], 此工具类的泛用性更高, 其内部会存在一些以字符串操作为主的方法。
@@ -66,8 +70,19 @@ object KQCodeUtils {
     private const val CQ_SPLIT = ","
     private const val CQ_KV = "="
 
+    /** string template */
+    val stringTemplate: CodeTemplate<String> = KQCodeStringTemplate
+
+    /** kqCode template */
+    val kqCodeTemplate: CodeTemplate<KQCode> = KQCodeTemplate
+
+
     @JvmStatic
     val instance = this
+
+    fun toCq(type: String): String {
+        return "$CQ_HEAD$type$CQ_END"
+    }
 
     /**
      * 将参数转化为CQ码字符串
@@ -104,6 +119,20 @@ object KQCodeUtils {
         split[0] to split[1]
     }.toTypedArray())
 
+
+    /**
+     * 根据参数转化为[KQCode]实例
+     * @param type cq码的类型
+     * @param params 参数列表
+     */
+    fun toKq(type: String, params: Map<String, *>): KQCode = KQCode(type, params as Map<String, String>)
+
+    /**
+     * 根据参数转化为[KQCode]实例
+     * @param type cq码的类型
+     * @param paramText 参数列表, 例如："qq=123"
+     */
+    fun toKq(type: String, vararg paramText: String): KQCode = KQCode(type, *paramText)
 
     /**
      * 将一段字符串根据字符串与CQ码来进行切割。
@@ -481,7 +510,10 @@ object KQCodeUtils {
     fun removeByType(type: String, text: String, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String = removeCode(type, text, trim, ignoreEmpty, delimiter)
 
 
+
 }
+
+
 
 
 

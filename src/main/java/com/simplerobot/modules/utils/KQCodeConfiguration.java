@@ -4,28 +4,35 @@ import com.forte.qqrobot.anno.depend.Beans;
 
 /**
  * 加载工具类与解码编码工具
+ * @author ForteScarlet
  */
 @Beans
 public class KQCodeConfiguration {
 
-    @Beans("kqCodeUtils")
+    @Beans("defaultKqCodeUtils")
     public KQCodeUtils getKQCodeUtils(){
         return KQCodeUtils.INSTANCE;
     }
 
-    @Beans("cqDecoder")
+    @Beans("defaultCqDecoder")
     public CQDecoder getCQDecoder(){
         return CQDecoder.INSTANCE;
     }
 
-    @Beans("cqEncoder")
+    @Beans("defaultCqEncoder")
     public CQEncoder getCQEncoder(){
         return CQEncoder.INSTANCE;
     }
 
-    @Beans("mqCodeUtils")
+    @Beans("defaultMqCodeUtils")
     public MQCodeUtils getMQCodeUtils() {
         return MQCodeUtils.INSTANCE;
     }
+
+    @Beans("defaultCQCodeStringTemplate")
+    public CodeTemplate<String> getCQCodeStringTemplate(){
+        return KQCodeStringTemplate.INSTANCE;
+    }
+
 
 }
