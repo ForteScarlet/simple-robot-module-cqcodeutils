@@ -3,7 +3,8 @@
 - `KQCode`变为参数不可变类，并增加一个参数可变的子类`MutableKQCode`, 可通过`KQCode`实例的`mutable()`方法进行转化或直接构建`MutableKQCode`实例。
 - 简单更新优化KQCode的DSL构建方式:
 `param = "key" to "value"` 可以简写成 `this["key"] = "value"`了。
-
+- 增加接口`CodeTemplate<T>`定义一些模板方法，例如`at(...)`、`image(...)`等。提供两个默认的实现类，具体查看文档。
+- 代码追加copyright信息
 
 # 1.4.1-1.13
 - 修复`split(...)`方法的bug

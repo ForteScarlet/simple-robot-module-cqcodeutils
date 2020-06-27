@@ -13,7 +13,7 @@
     <groupId>io.github.ForteScarlet.simple-robot-module</groupId>
     <artifactId>mod-cqcodeutils</artifactId>
 
-    <!-- 1.5.0-1.13  -->
+    <!-- 1.5.0-1.15  -->
     <version>1.5.0-1.15</version>
 
     <properties>
