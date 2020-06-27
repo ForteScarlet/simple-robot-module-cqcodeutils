@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2020. ForteScarlet All rights reserved.
+ * Project  mod-cqcodeutils
+ * File     codeTemplate.kt
+ *
+ *
+ *
+ *
+ *
+ */
+
 package com.simplerobot.modules.utils
 
 /**
@@ -164,6 +175,8 @@ interface CodeTemplate<T> {
  * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
  */
 object KQCodeStringTemplate: CodeTemplate<String> {
+    @JvmStatic
+    val instance = this
     private val utils: KQCodeUtils = KQCodeUtils
     private const val AT_ALL: String = "[CQ:at,qq=all]"
     /**
@@ -371,12 +384,15 @@ object KQCodeStringTemplate: CodeTemplate<String> {
  * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
  */
 object KQCodeTemplate: CodeTemplate<KQCode> {
-    private val AT_ALL: KQCode get() = KQCode("at", "qq" to "all")
+    @JvmStatic
+    val instance = this
     /**
      * at别人
      */
     override fun at(code: String): KQCode = KQCode("at", "qq" to code)
 
+    /** kq for all */
+    private val AT_ALL: KQCode = KQCode("at", "qq" to "all")
     /**
      * at所有人
      */
@@ -414,6 +430,9 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      */
     override fun record(id: String, magic: Boolean): KQCode = KQCode("record", "file" to id, "magic" to magic.toString())
 
+    /** rps */
+    private val RPS: KQCode = KQCode("rps")
+
     /**
      * rps 猜拳
      * [CQ:rps,type={1}] - 发送猜拳魔法表情
@@ -422,7 +441,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * 2 - 猜拳结果为剪刀
      * 3 - 猜拳结果为布
      */
-    override fun rps(): KQCode = KQCode("rps")
+    override fun rps(): KQCode = RPS
 
 
     /**
@@ -435,12 +454,15 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      */
     override fun rps(type: String): KQCode = KQCode("rps", "type" to type)
 
+    /** dice */
+    private val DICE: KQCode = KQCode("dice")
+
     /**
      * 骰子
      * [CQ:dice,type={1}] - 发送掷骰子魔法表情
      * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
      */
-    override fun dice(): KQCode = KQCode("dice")
+    override fun dice(): KQCode = DICE
 
 
     /**
@@ -546,5 +568,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {4} 分享地点的具体地址
      */
     override fun location(lat: String, lon: String, title: String, content: String): KQCode = KQCode("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+
+
+
 }
 

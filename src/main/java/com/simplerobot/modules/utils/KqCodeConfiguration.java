@@ -7,30 +7,30 @@ import com.forte.qqrobot.anno.depend.Beans;
  * @author ForteScarlet
  */
 @Beans
-public class KQCodeConfiguration {
+public class KqCodeConfiguration {
 
     @Beans("defaultKqCodeUtils")
-    public KQCodeUtils getKQCodeUtils(){
+    public KQCodeUtils getKqCodeUtils(){
         return KQCodeUtils.INSTANCE;
     }
 
     @Beans("defaultCqDecoder")
-    public CQDecoder getCQDecoder(){
+    public CQDecoder getCqDecoder(){
         return CQDecoder.INSTANCE;
     }
 
     @Beans("defaultCqEncoder")
-    public CQEncoder getCQEncoder(){
+    public CQEncoder getCqEncoder(){
         return CQEncoder.INSTANCE;
     }
 
     @Beans("defaultMqCodeUtils")
-    public MQCodeUtils getMQCodeUtils() {
+    public MQCodeUtils getMqCodeUtils() {
         return MQCodeUtils.INSTANCE;
     }
 
     @Beans("defaultCQCodeStringTemplate")
-    public CodeTemplate<String> getCQCodeStringTemplate(){
+    public CodeTemplate<String> getCqCodeStringTemplate(){
         return KQCodeStringTemplate.INSTANCE;
     }
 

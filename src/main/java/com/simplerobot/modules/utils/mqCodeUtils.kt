@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2020. ForteScarlet All rights reserved.
+ * Project  mod-cqcodeutils
+ * File     mqCodeUtils.kt
+ *
+ *
+ *
+ *
+ *
+ */
+
 package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.KQCodeUtils.remove
