@@ -13,7 +13,6 @@ package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.KQCodeUtils.remove
 import com.simplerobot.modules.utils.KQCodeUtils.removeByType
-import java.lang.IllegalArgumentException
 
 /**
  * mirai码工具类。
