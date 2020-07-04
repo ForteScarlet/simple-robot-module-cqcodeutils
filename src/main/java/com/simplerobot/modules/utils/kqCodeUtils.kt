@@ -132,13 +132,25 @@ object KQCodeUtils {
         split[0] to split[1]
     }.toTypedArray())
 
+    /**
+     * 获取无参数的[KQCode]
+     * @param type cq码的类型
+     */
+    fun toKq(type: String): KQCode = KQCode(type)
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, params: Map<String, *>): KQCode = KQCode(type, params as Map<String, String>)
+    fun toKq(type: String, params: Map<String, *>): KQCode = KQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
+
+    /**
+     * 根据参数转化为[KQCode]实例
+     * @param type cq码的类型
+     * @param params 参数列表
+     */
+    fun toKq(type: String, vararg params: Pair<String, *>): KQCode = KQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
@@ -501,7 +513,6 @@ object KQCodeUtils {
     /**
      * 移除字符串中的所有的CQ码，返回字符串
      * 必须是完整的\[CQ...]
-     * @param type CQ码的类型
      * @param text 文本正文
      * @param trim 是否对文本执行trim，默认为true
      * @param ignoreEmpty 如果字符为纯空白字符，是否忽略
