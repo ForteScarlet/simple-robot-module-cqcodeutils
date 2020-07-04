@@ -1,3 +1,6 @@
+# 1.5.1-1.15
+- 修复`KQCodeUtils.remove(msg [,...])`的时候，如果msg是不存在CQ码的长度大于等于5的消息，则会遗失第一个字符的问题。
+
 
 # 1.5.0-1.15
 - `KQCode`变为参数不可变类，并增加一个参数可变的子类`MutableKQCode`, 可通过`KQCode`实例的`mutable()`方法进行转化或直接构建`MutableKQCode`实例。

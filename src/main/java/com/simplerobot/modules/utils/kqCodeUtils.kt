@@ -450,6 +450,10 @@ object KQCodeUtils {
                     return text
                 }
 
+                if(!text.contains(head)){
+                    return text
+                }
+
                 do {
                     hi++
                     hi = text.indexOf(head, hi)

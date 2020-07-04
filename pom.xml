@@ -14,7 +14,7 @@
     <artifactId>mod-cqcodeutils</artifactId>
 
     <!-- 1.5.0-1.15  -->
-    <version>1.5.0-1.15</version>
+    <version>1.5.1-1.15</version>
 
     <properties>
         <core.version>1.15.1</core.version>
