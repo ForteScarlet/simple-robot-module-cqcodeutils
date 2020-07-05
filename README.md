@@ -28,7 +28,7 @@ kotlin中可作为`object`直接使用
 实现了`Map接口`与`CharSequence`接口。
 
 ## **文档**
-文档参考：http://simple-robot-doc.forte.love/1644790
+详细内容请前往文档：http://simple-robot-doc.forte.love/1644790
 
 ## **小特色**
 kotlin下，提供DSL风格的构建方式：

@@ -1,3 +1,10 @@
+# 1.6.0
+- 修复`MQCodeUtils`中无法解析无参数mirai码的bug（例如atAll）
+- 为KQCode增加一些单例实例: `AtAll`、`Rps`、`Dice`、`Shake`、`Anonymous`、`AnonymousCompulsory`
+- 版本号中不再携带核心版本号
+
+
+
 # 1.5.1-1.15
 - 修复`KQCodeUtils.remove(msg [,...])`的时候，如果msg是不存在CQ码的长度大于等于5的消息，则会遗失第一个字符的问题。
 

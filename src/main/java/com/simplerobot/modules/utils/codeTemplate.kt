@@ -12,6 +12,8 @@
  */
 
 
+@file:Suppress("unused")
+
 package com.simplerobot.modules.utils
 
 /**
@@ -173,7 +175,6 @@ interface CodeTemplate<T> {
 //**************************************
 
 
-
 /**
  * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
  */
@@ -284,6 +285,9 @@ object KQCodeStringTemplate: CodeTemplate<String> {
     override fun shake(): String = SHAKE
 
 
+    private const val ANONYMOUS_TRUE = "[CQ:anonymous,ignore=true]"
+    private const val ANONYMOUS_FALSE = "[CQ:anonymous]"
+
     /**
      * 匿名消息
      * [CQ:anonymous,ignore={1}] - 匿名发消息（仅支持群消息使用）
@@ -294,7 +298,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      * [CQ:anonymous,ignore=true]
      * [CQ:anonymous]
      */
-    override fun anonymous(ignore: Boolean): String = utils.toCq("anonymous", "ignore" to ignore)
+    override fun anonymous(ignore: Boolean): String = if(ignore) ANONYMOUS_TRUE else ANONYMOUS_FALSE
 
 
     /**
@@ -395,7 +399,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
     override fun at(code: String): KQCode = KQCode("at", "qq" to code)
 
     /** kq for all */
-    private val AT_ALL: KQCode = KQCode("at", "qq" to "all")
+    private val AT_ALL: KQCode = AtAll
     /**
      * at所有人
      */
@@ -434,7 +438,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
     override fun record(id: String, magic: Boolean): KQCode = KQCode("record", "file" to id, "magic" to magic.toString())
 
     /** rps */
-    private val RPS: KQCode = KQCode("rps")
+    private val RPS: KQCode = Rps
 
     /**
      * rps 猜拳
@@ -458,7 +462,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
     override fun rps(type: String): KQCode = KQCode("rps", "type" to type)
 
     /** dice */
-    private val DICE: KQCode = KQCode("dice")
+    private val DICE: KQCode = Dice
 
     /**
      * 骰子
@@ -472,15 +476,23 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * 骰子
      * [CQ:dice,type={1}] - 发送掷骰子魔法表情
      * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
+     *
+     * @see dice
+     *
      */
     override fun dice(type: String): KQCode = KQCode("dice", "type" to type)
 
 
+    private val SHAKE: KQCode = Shake
+
     /**
      * 戳一戳（原窗口抖动，仅支持好友消息使用）
      */
-    override fun shake(): KQCode = KQCode("shake")
+    override fun shake(): KQCode = SHAKE
 
+
+    private val ANONYMOUS_TRUE = Anonymous
+    private val ANONYMOUS_FALSE = AnonymousCompulsory
 
     /**
      * 匿名消息
@@ -492,7 +504,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * [CQ:anonymous,ignore=true]
      * [CQ:anonymous]
      */
-    override fun anonymous(ignore: Boolean): KQCode = KQCode("anonymous", "ignore" to ignore.toString())
+    override fun anonymous(ignore: Boolean): KQCode = if(ignore) ANONYMOUS_TRUE else ANONYMOUS_FALSE
 
 
     /**

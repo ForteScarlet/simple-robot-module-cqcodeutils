@@ -26,7 +26,7 @@ open class KQCode
 protected constructor(open val params: Map<String, String>, var type: String) :
         CharSequence,
         Map<String, String> by params {
-    constructor(type: String): this(mapOf(), type)
+    constructor(type: String): this(emptyMap(), type)
     constructor(type: String, params: Map<String, String>): this(params.toMap(), type)
     constructor(type: String, vararg params: Pair<String, String>): this(mapOf(*params), type)
     constructor(type: String, vararg params: String): this(mapOf(*params.map {
@@ -41,6 +41,8 @@ protected constructor(open val params: Map<String, String>, var type: String) :
      */
     override val length: Int
         get() = toString().length
+
+
 
 
     /**
@@ -88,6 +90,25 @@ protected constructor(open val params: Map<String, String>, var type: String) :
      * 转化为不可变类型[KQCode]
      */
     open fun immutable(): KQCode = this
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KQCode
+
+        if (params != other.params) return false
+        if (type != other.type) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = params.hashCode()
+        result = 31 * result + type.hashCode()
+        return result
+    }
 
 
     companion object {

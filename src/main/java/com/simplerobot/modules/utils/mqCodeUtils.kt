@@ -52,17 +52,26 @@ object MQCodeUtils {
             throw IllegalArgumentException("blank string.")
         }
 
-        // 获取前两个冒号
+        // 获取前两个冒号，也有可能是1个冒号, 例如[mirai:atall]
         val i1 = str.indexOf(':')
         val i2 = str.indexOf(':', i1 + 1)
         val end = str.indexOf(']')
 
-        if (i1 < 0 || i2 < 0 || end < 0) {
+        if (i1 < 0 || end < 0) {
             throw IllegalArgumentException("cannot parse $str to MqCode.")
         }
 
-        val t = str.substring(i1 + 1, i2)
-        val value = str.substring(i2 + 1, end)
+        val t: String
+        val value: String?
+
+        if(i2 < 0){
+            t = str.substring(i1 + 1, end)
+            value = null
+        }else{
+            t = str.substring(i1 + 1, i2)
+            value = str.substring(i2 + 1, end)
+        }
+
         return MQCode(t, value)
     }
 
@@ -442,49 +451,5 @@ object MQCodeUtils {
 
 }
 
-
-/** MQ code 封装数据类。
- * 参数不可变的数据类。
- *
- */
-data class MQCode(val type: String, val param: String): CharSequence {
-
-    /**
-     * string value
-     */
-    private val value: String
-    get() = "[mirai:$type:$param]"
-
-
-    override fun toString(): String = value
-
-    /**
-     * 转化为KQCode对象。
-     */
-    fun toKQCode() = KQCode(type, type to param)
-
-    /**
-     * Returns the length of this character sequence.
-     */
-    override val length: Int
-        get() = value.length
-
-
-    /**
-     * get char from string
-     * @see value
-     * @see toString
-     * @see CharSequence.get
-     */
-    override operator fun get(index: Int): Char = value[index]
-
-    /**
-     * sub sequence
-     * @see value
-     * @see toString
-     * @see CharSequence.subSequence
-     */
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = value.subSequence(startIndex, endIndex)
-}
 
 
