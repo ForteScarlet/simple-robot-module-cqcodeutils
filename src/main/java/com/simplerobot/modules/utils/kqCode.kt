@@ -112,13 +112,20 @@ protected constructor(open val params: Map<String, String>, var type: String) :
 
 
     companion object {
+
+        private val paramSplitRegex: Regex = Regex(" *, *")
+        private val prarmKeyValueSplitRegex: Regex = Regex("=")
+
         /**
          * 从cq码字符串转到KQCode
          * @since 1.1-1.11
          * infix since 1.2-1.11
+         * @param text CQ码字符串的正文
+         * @param decode 因为这段CQ码字符串可能已经转义过了，此处是否指定其转化的时候解码一次。默认为true
          */
         @JvmStatic
-        infix fun of(text: String): KQCode {
+        @JvmOverloads
+        fun of(text: String, decode: Boolean = true): KQCode {
             var tempText = text.trim()
             // 不是[CQ:开头，或者不是]结尾都不行
             if(!tempText.startsWith("[CQ:") || !tempText.endsWith("]")){
@@ -127,12 +134,21 @@ protected constructor(open val params: Map<String, String>, var type: String) :
             // 是[CQ:开头，]结尾，切割并转化
             tempText = tempText.substring(4, tempText.lastIndex)
 
-            val split = tempText.split(Regex(" *, *"))
+            val split = tempText.split(paramSplitRegex)
 
             val type = split[0]
 
             return if(split.size > 1){
-                KQCode(type, *split.subList(1, split.size).toTypedArray())
+                if(decode){
+                    // 参数解码
+                    val map = split.subList(1, split.size).map {
+                        val sp = it.split(prarmKeyValueSplitRegex, 2)
+                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                    }.toMap()
+                    KQCode(map, type)
+                }else{
+                    KQCode(type, *split.subList(1, split.size).toTypedArray())
+                }
             }else{
                 KQCode(type)
             }

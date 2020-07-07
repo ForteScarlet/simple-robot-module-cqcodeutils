@@ -343,6 +343,8 @@ object KQCodeUtils {
     /**
      * 获取文本字符串中CQ码字符串的迭代器
      * @since 1.1-1.11
+     * @param text 存在CQ码正文的文本
+     * @param type 要获取的CQ码的类型，如果为空字符串则视为所有，默认为所有。
      */
     @JvmOverloads
     fun getCqIter(text: String, type: String = ""): Iterator<String> = CqIterator(text, type)
@@ -400,22 +402,29 @@ object KQCodeUtils {
     /**
      * 以[getCqIter]方法为基础获取字符串中全部的Kqs对象
      * @since 1.1-1.11
+     * @param text 存在CQ码正文的文本
+     * @param type 要获取的CQ码的类型，如果为空字符串则视为所有，默认为所有。
+     * @param decode 是否对参数进行解码，一般字符串中的CQ码都是转码过的，所以默认为true
      */
     @JvmOverloads
-    fun getKqs(text: String, type: String = ""): Array<KQCode> {
+    fun getKqs(text: String, type: String = "", decode: Boolean = true): Array<KQCode> {
         val iter = getCqIter(text, type)
         val list = mutableListOf<KQCode>()
-        iter.forEach { list.add(KQCode.of(it)) }
+        iter.forEach { list.add(KQCode.of(it, decode)) }
         return list.toTypedArray()
     }
 
     /**
      * 获取指定索引位的cq码，并封装类KQ对象
+     * @param text 存在CQ码的正文
+     * @param type 要获取的CQ码的类型，默认为所有类型
+     * @param index 获取的索引位的CQ码，默认为0，即第一个
+     * @param decode 是否解码参数。默认为true。
      */
     @JvmOverloads
-    fun getKq(text: String, type: String = "", index: Int = 0): KQCode? {
+    fun getKq(text: String, type: String = "", index: Int = 0, decode: Boolean = true): KQCode? {
         val cq = getCq(text, type, index) ?: return null
-        return KQCode.of(cq)
+        return KQCode.of(cq, decode)
     }
 
     /**

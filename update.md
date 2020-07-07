@@ -1,3 +1,6 @@
+# 1.6.1
+- 修复`KQCode.of(...)`中可能会将CQ码字符串的参数二次转义的问题。现在增加了一个`decode: Boolean`参数来控制是否反转义，且默认为true。
+
 # 1.6.0
 - 修复`MQCodeUtils`中无法解析无参数mirai码的bug（例如atAll）
 - 为KQCode增加一些单例实例: `AtAll`、`Rps`、`Dice`、`Shake`、`Anonymous`、`AnonymousCompulsory`
