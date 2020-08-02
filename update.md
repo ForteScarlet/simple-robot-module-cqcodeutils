@@ -1,5 +1,5 @@
 # 1.7.0
-- 追加一个工具类`KQCodeMessageUtils`，支持将消息或者CQ码转化为Json风格的map数据。
+- 追加一个工具类`KQCodeJsonUtils`，支持将消息或者CQ码转化为Json风格的map数据。
 
 
 # 1.6.1

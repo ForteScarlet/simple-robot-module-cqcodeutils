@@ -5,7 +5,7 @@ package com.simplerobot.modules.utils
  * 针对于消息与CQ码之间的一些简易操作。
  * 例如将消息或者CQ码拆分为json格式等。
  */
-object KQCodeMessageUtils {
+object KQCodeJsonUtils {
 
     /**
      * 将一串消息切割并转化为Json格式的map。
@@ -45,7 +45,6 @@ object KQCodeMessageUtils {
     /**
      * 将一个kqCode转化为指定的map风格
      * `[CQ:at,qq=123456]` -> `{"type": "at", "data": {"qq":"123456789"}}`
-     * 注意，返回的Map是不可变的
      */
     fun toJsonMap(code: KQCode): Map<String, Any> {
         val type = "type" to code.type
