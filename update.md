@@ -1,3 +1,7 @@
+# 1.7.0
+- 追加一个工具类`KQCodeMessageUtils`，支持将消息或者CQ码转化为Json风格的map数据。
+
+
 # 1.6.1
 - 修复`KQCode.of(...)`中可能会将CQ码字符串的参数二次转义的问题。现在增加了一个`decode: Boolean`参数来控制是否反转义，且默认为true。
 
