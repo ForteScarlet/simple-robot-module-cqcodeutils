@@ -29,21 +29,20 @@ package com.simplerobot.modules.utils
 object CQDecoder {
 
     @JvmStatic
-    val instance = this
+    val instance get() = this
 
     /** 非CQ码文本消息解义 */
-    fun decodeText(str: String?): String? {
-        return if(str != null){
-            str.replace("&amp;", "&")
-                    .replace("&#91;", "[")
-                    .replace("&#93;", "]")
-        }else null
-    }
+    fun decodeText(str: String?): String? =
+            str?.replace("&amp;", "&")
+                    ?.replace("&#91;", "[")
+                    ?.replace("&#93;", "]")
 
     /** CQ码参数值消息解义 */
-    fun decodeParams(str: String?): String? {
-        return str?.replace("&amp;", "&")?.replace("&#91;", "[")?.replace("&#93;", "]")?.replace("&#44;", ",")
-    }
+    fun decodeParams(str: String?): String? =
+            str?.replace("&amp;", "&")
+                   ?.replace("&#91;", "[")
+                   ?.replace("&#93;", "]")
+                   ?.replace("&#44;", ",")
 
 }
 
@@ -51,16 +50,17 @@ object CQDecoder {
 object CQEncoder {
 
     @JvmStatic
-    val instance = this
+    val instance get() = this
 
     /** 非CQ码文本消息转义 */
-    fun encodeText(str: String?) =
+    fun encodeText(str: String?): String? =
             str?.replace("&", "&amp;")
                     ?.replace("[", "&#91;")
                     ?.replace("]", "&#93;")
 
+
     /** CQ码参数值消息转义 */
-    fun encodeParams(str: String?) =
+    fun encodeParams(str: String?): String? =
             str?.replace("&", "&amp;")
                     ?.replace("[", "&#91;")
                     ?.replace("]", "&#93;")
@@ -93,7 +93,7 @@ object KQCodeUtils {
 
 
     @JvmStatic
-    val instance = this
+    val instance get() = this
 
     fun toCq(type: String): String {
         return "$CQ_HEAD$type$CQ_END"
