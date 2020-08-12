@@ -205,35 +205,37 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
  * 不会对cq码字符串的格式进行校验。
  */
 open class StringKQCode(code: String) : KQCode {
-    protected val codeText: String = code.trim()
+    private val _codeText: String = code.trim()
+    private val _type: String
+    private val _size: Int
 
     private val empty: Boolean
-    override val type: String
     private val cqHead: String
     private val startIndex: Int
     private val endIndex: Int
-    override val size: Int
 
     init {
-        if (!codeText.startsWith(CQ_HEAD) || !codeText.endsWith(CQ_END)) {
-            throw IllegalArgumentException("text \"$codeText\" is not a cq code text.")
+        if (!_codeText.startsWith(CQ_HEAD) || !_codeText.endsWith(CQ_END)) {
+            throw IllegalArgumentException("text \"$_codeText\" is not a cq code text.")
         }
         // get type from string
         startIndex = CQ_HEAD.length
-        endIndex = codeText.lastIndex
-        val firstSplitIndex = codeText.indexOf(CQ_SPLIT, startIndex)
-        val typeEndIndex = if (firstSplitIndex < 0) codeText.length else firstSplitIndex
-        type = codeText.substring(startIndex, firstSplitIndex)
-        cqHead = CQ_HEAD + type
-        empty = codeText.contains(CQ_SPLIT)
+        endIndex = _codeText.lastIndex
+        val firstSplitIndex = _codeText.indexOf(CQ_SPLIT, startIndex)
+        val typeEndIndex = if (firstSplitIndex < 0) _codeText.length else firstSplitIndex
+        _type = _codeText.substring(startIndex, firstSplitIndex)
+        cqHead = CQ_HEAD + _type
+        empty = _codeText.contains(CQ_SPLIT)
         // 计算 key-value的个数, 即计算CQ_KV的个数
         val kvChar = CQ_KV.first()
-        size = codeText.count { it == kvChar }
+        _size = _codeText.count { it == kvChar }
     }
 
     override fun toString(): String = codeText
     override val length: Int = codeText.length
-
+    override val size: Int = _size
+    override val type: String = _type
+    protected open val codeText: String = _codeText
 
     /**
      * 获取转义前的值。一般普通的[get]方法得到的是反转义后的。
