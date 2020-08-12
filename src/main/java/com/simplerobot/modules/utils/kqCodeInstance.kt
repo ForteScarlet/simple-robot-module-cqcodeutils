@@ -204,28 +204,31 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
  * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
  * 不会对cq码字符串的格式进行校验。
  */
-class StringKQCode(kqCode: String): KQCode {
-    private val kqCodeText: String = kqCode.trim()
+open class StringKQCode(code: String): KQCode {
+    protected val codeText: String = code.trim()
+
+    private val empty: Boolean
     override val type: String
     private val cqHead: String
     private val startIndex: Int
     private val endIndex: Int
 
     init {
-        if (!kqCodeText.startsWith(CQ_HEAD) || !kqCodeText.endsWith(CQ_END)) {
-            throw IllegalArgumentException("text \"$kqCodeText\" is not a cq code text.")
+        if (!codeText.startsWith(CQ_HEAD) || !codeText.endsWith(CQ_END)) {
+            throw IllegalArgumentException("text \"$codeText\" is not a cq code text.")
         }
         // get type from string
         startIndex = CQ_HEAD.length
-        endIndex = kqCodeText.lastIndex
-        val firstSplitIndex = kqCodeText.indexOf(CQ_SPLIT, startIndex)
-        val typeEndIndex = if (firstSplitIndex < 0) kqCodeText.length else firstSplitIndex
-        type = kqCodeText.substring(startIndex, firstSplitIndex)
+        endIndex = codeText.lastIndex
+        val firstSplitIndex = codeText.indexOf(CQ_SPLIT, startIndex)
+        val typeEndIndex = if (firstSplitIndex < 0) codeText.length else firstSplitIndex
+        type = codeText.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + type
+        empty = codeText.contains(CQ_SPLIT)
     }
 
-    override fun toString(): String = kqCodeText
-    override val length: Int = kqCodeText.length
+    override fun toString(): String = codeText
+    override val length: Int = codeText.length
 
 
     /**
@@ -237,9 +240,7 @@ class StringKQCode(kqCode: String): KQCode {
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
      */
-    override fun toCQCode(): CQCode {
-        TODO("Not yet implemented")
-    }
+    override fun toCQCode(): CQCode = CQCode.of(codeText)
 
     /**
      * 转化为可变参的[MutableKQCode]
@@ -297,23 +298,15 @@ class StringKQCode(kqCode: String): KQCode {
     override fun get(key: String): String? = CQDecoder.decodeParams(getParam(key))
 
     /**
-     * Returns the character at the specified [index] in this character sequence.
-     *
-     * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this character sequence.
-     *
-     * Note that the [String] implementation of this interface in Kotlin/JS has unspecified behavior
-     * if the [index] is out of its bounds.
+     * 获取指定字符
+     * @see CharSequence.get
      */
-    override fun get(index: Int): Char {
-        TODO("Not yet implemented")
-    }
+    override fun get(index: Int): Char = codeText[index]
 
     /**
-     * Returns `true` if the map is empty (contains no elements), `false` otherwise.
+     * 如果不存在[CQ_SPLIT]，即参数切割符，则说明不存在参数
      */
-    override fun isEmpty(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isEmpty(): Boolean = empty
 
     /**
      * Returns a new character sequence that is a subsequence of this character sequence,
@@ -322,9 +315,7 @@ class StringKQCode(kqCode: String): KQCode {
      * @param startIndex the start index (inclusive).
      * @param endIndex the end index (exclusive).
      */
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
-        TODO("Not yet implemented")
-    }
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = codeText.subSequence(startIndex, endIndex)
 
     /**
      * 获取参数
@@ -349,21 +340,21 @@ class StringKQCode(kqCode: String): KQCode {
 //        if (i == index) {
         // 从from开始找参数
         val paramFind = ",$key="
-        val phi = kqCodeText.indexOf(paramFind, startIndex)
+        val phi: Int = codeText.indexOf(paramFind, startIndex)
         if (phi < 0) {
             return null
         }
         // 找到了之后，找下一个逗号，如果没有，就用最终结尾的位置
         val startIndex = phi + paramFind.length
-        var pei = kqCodeText.indexOf(CQ_SPLIT, startIndex)
+        var pei = codeText.indexOf(CQ_SPLIT, startIndex)
         // 超出去了
         if (pei < 0 || pei > endIndex) {
             pei = endIndex
         }
-        if (startIndex > kqCodeText.lastIndex || startIndex > pei) {
+        if (startIndex > codeText.lastIndex || startIndex > pei) {
             return null
         }
-        return kqCodeText.substring(startIndex, pei)
+        return codeText.substring(startIndex, pei)
 //        } else {
 //            return null
 //        }
