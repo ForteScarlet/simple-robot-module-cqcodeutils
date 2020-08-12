@@ -64,7 +64,7 @@ internal fun String.textToJsonMap(): Map<String, Any> = mapOf("type" to "text", 
  * CQ码类型转化为json格式的map
  */
 internal fun String.cqToJsonMap(): Map<String, Any> {
-    val code = KQCode.of(this)
+    val code = MapKQCode.of(this)
     val type = "type" to code.type
     val data = "data" to code.toMap()
     return mapOf(type, data)

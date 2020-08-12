@@ -45,7 +45,7 @@ interface KQCode: Map<String, String>, CharSequence {
     /**
      * 与其他字符序列拼接为[Msgs]实例
      */
-    @JvmDefault
+//    @JvmDefault
     operator fun plus(other: CharSequence): Msgs = Msgs(collection = listOf(this, other))
 
     /**
@@ -58,57 +58,7 @@ interface KQCode: Map<String, String>, CharSequence {
      */
     fun immutable(): KQCode
 
-    companion object {
-        private val paramSplitRegex: Regex = Regex(" *, *")
-        private val paramKeyValueSplitRegex: Regex = Regex("=")
 
-        /**
-         * 从cq码字符串转到KQCode
-         * @since 1.1-1.11
-         * infix since 1.2-1.11
-         * @param text CQ码字符串的正文
-         * @param decode 因为这段CQ码字符串可能已经转义过了，此处是否指定其转化的时候解码一次。默认为true
-         */
-        @JvmStatic
-        @JvmOverloads
-        fun of(text: String, decode: Boolean = true): KQCode {
-            var tempText = text.trim()
-            // 不是[CQ:开头，或者不是]结尾都不行
-            if(!tempText.startsWith("[CQ:") || !tempText.endsWith("]")){
-                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
-            }
-            // 是[CQ:开头，]结尾，切割并转化
-            tempText = tempText.substring(4, tempText.lastIndex)
-
-            val split = tempText.split(paramSplitRegex)
-
-            val type = split[0]
-
-            return if(split.size > 1){
-                if(decode){
-                    // 参数解码
-                    val map = split.subList(1, split.size).map {
-                        val sp = it.split(paramKeyValueSplitRegex, 2)
-                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
-                    }.toMap()
-                    MapKQCode(map, type)
-                }else{
-                    MapKQCode(type, *split.subList(1, split.size).toTypedArray())
-                }
-            }else{
-                MapKQCode(type)
-            }
-
-        }
-
-        /**
-         * 从CQCode转到KQCode
-         * @since 1.0-1.11
-         * infix since 1.2-1.11
-         */
-        @JvmStatic
-        infix fun of(cqCode: com.forte.qqrobot.beans.cqcode.CQCode): KQCode = MapKQCode(cqCode.cqCodeTypesName, cqCode)
-    }
 
 }
 

@@ -78,11 +78,6 @@ internal constructor(open val params: Map<String, String>, override var type: St
     override fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode = com.forte.qqrobot.beans.cqcode.CQCode.of(type, mutableMapOf(*params.entries.map { it.key to CQEncoder.encodeParams(it.value) }.toTypedArray()))
 
 
-//    /**
-//     * plus for other
-//     */
-//    override operator fun plus(other: CharSequence): Msgs
-
     /**
      * 转化为参数可变的[MutableKQCode]
      */
@@ -110,6 +105,58 @@ internal constructor(open val params: Map<String, String>, override var type: St
         var result = params.hashCode()
         result = 31 * result + type.hashCode()
         return result
+    }
+
+    companion object {
+        private val paramSplitRegex: Regex = Regex(" *, *")
+        private val paramKeyValueSplitRegex: Regex = Regex("=")
+
+        /**
+         * 从cq码字符串转到KQCode
+         * @since 1.1-1.11
+         * infix since 1.2-1.11
+         * @param text CQ码字符串的正文
+         * @param decode 因为这段CQ码字符串可能已经转义过了，此处是否指定其转化的时候解码一次。默认为true
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun of(text: String, decode: Boolean = true): KQCode {
+            var tempText = text.trim()
+            // 不是[CQ:开头，或者不是]结尾都不行
+            if(!tempText.startsWith("[CQ:") || !tempText.endsWith("]")){
+                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
+            }
+            // 是[CQ:开头，]结尾，切割并转化
+            tempText = tempText.substring(4, tempText.lastIndex)
+
+            val split = tempText.split(paramSplitRegex)
+
+            val type = split[0]
+
+            return if(split.size > 1){
+                if(decode){
+                    // 参数解码
+                    val map = split.subList(1, split.size).map {
+                        val sp = it.split(paramKeyValueSplitRegex, 2)
+                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                    }.toMap()
+                    MapKQCode(map, type)
+                }else{
+                    MapKQCode(type, *split.subList(1, split.size).toTypedArray())
+                }
+            }else{
+                MapKQCode(type)
+            }
+
+        }
+
+        /**
+         * 从CQCode转到KQCode
+         * @since 1.0-1.11
+         * infix since 1.2-1.11
+         */
+        @JvmStatic
+        infix fun of(cqCode: com.forte.qqrobot.beans.cqcode.CQCode): KQCode = MapKQCode(cqCode.cqCodeTypesName, cqCode)
     }
 
 }
@@ -157,8 +204,7 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
  * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
  * 不会对cq码字符串的格式进行校验。
  */
-class StringKQCode
-private constructor(kqCode: String) : KQCode {
+class StringKQCode(kqCode: String): KQCode {
     private val kqCodeText: String = kqCode.trim()
     override val type: String
     private val cqHead: String
@@ -174,7 +220,7 @@ private constructor(kqCode: String) : KQCode {
         endIndex = kqCodeText.lastIndex
         val firstSplitIndex = kqCodeText.indexOf(CQ_SPLIT, startIndex)
         val typeEndIndex = if (firstSplitIndex < 0) kqCodeText.length else firstSplitIndex
-        type = kqCodeText.substring(firstSplitIndex, typeEndIndex)
+        type = kqCodeText.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + type
     }
 
@@ -246,7 +292,7 @@ private constructor(kqCode: String) : KQCode {
     }
 
     /**
-     * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
+     * 获取一个解码后的值
      */
     override fun get(key: String): String? = CQDecoder.decodeParams(getParam(key))
 
