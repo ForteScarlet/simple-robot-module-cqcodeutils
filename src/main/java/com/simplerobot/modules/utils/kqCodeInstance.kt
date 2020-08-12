@@ -231,11 +231,11 @@ open class StringKQCode(code: String) : KQCode {
         _size = _codeText.count { it == kvChar }
     }
 
-    override fun toString(): String = codeText
-    override val length: Int = codeText.length
+    protected open val codeText: String = _codeText
+    override fun toString(): String = _codeText
+    override val length: Int = _codeText.length
     override val size: Int = _size
     override val type: String = _type
-    protected open val codeText: String = _codeText
 
     /**
      * 获取转义前的值。一般普通的[get]方法得到的是反转义后的。
