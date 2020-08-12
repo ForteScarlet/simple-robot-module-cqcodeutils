@@ -123,7 +123,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
         fun of(text: String, decode: Boolean = true): KQCode {
             var tempText = text.trim()
             // 不是[CQ:开头，或者不是]结尾都不行
-            if(!tempText.startsWith("[CQ:") || !tempText.endsWith("]")){
+            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
                 throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
             }
             // 是[CQ:开头，]结尾，切割并转化
@@ -133,18 +133,18 @@ internal constructor(open val params: Map<String, String>, override var type: St
 
             val type = split[0]
 
-            return if(split.size > 1){
-                if(decode){
+            return if (split.size > 1) {
+                if (decode) {
                     // 参数解码
                     val map = split.subList(1, split.size).map {
                         val sp = it.split(paramKeyValueSplitRegex, 2)
                         sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
                     }.toMap()
                     MapKQCode(map, type)
-                }else{
+                } else {
                     MapKQCode(type, *split.subList(1, split.size).toTypedArray())
                 }
-            }else{
+            } else {
                 MapKQCode(type)
             }
 
@@ -204,7 +204,7 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
  * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
  * 不会对cq码字符串的格式进行校验。
  */
-open class StringKQCode(code: String): KQCode {
+open class StringKQCode(code: String) : KQCode {
     protected val codeText: String = code.trim()
 
     private val empty: Boolean
@@ -212,6 +212,7 @@ open class StringKQCode(code: String): KQCode {
     private val cqHead: String
     private val startIndex: Int
     private val endIndex: Int
+    override val size: Int
 
     init {
         if (!codeText.startsWith(CQ_HEAD) || !codeText.endsWith(CQ_END)) {
@@ -225,6 +226,9 @@ open class StringKQCode(code: String): KQCode {
         type = codeText.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + type
         empty = codeText.contains(CQ_SPLIT)
+        // 计算 key-value的个数, 即计算CQ_KV的个数
+        val kvChar = CQ_KV.first()
+        size = codeText.count { it == kvChar }
     }
 
     override fun toString(): String = codeText
@@ -267,29 +271,27 @@ open class StringKQCode(code: String): KQCode {
         get() = TODO("Not yet implemented")
 
     /**
-     * Returns the number of key/value pairs in the map.
-     */
-    override val size: Int
-        get() = TODO("Not yet implemented")
-
-    /**
      * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
     override val values: Collection<String>
         get() = TODO("Not yet implemented")
 
     /**
-     * Returns `true` if the map contains the specified [key].
+     * 查询cq码字符串中是否存在指定的key
      */
     override fun containsKey(key: String): Boolean {
-        TODO("Not yet implemented")
+        if (empty) return false
+        return codeText.contains("$CQ_SPLIT$key$CQ_KV")
     }
 
     /**
-     * Returns `true` if the map maps one or more keys to the specified [value].
+     * 查询cq码字符串中是否存在对应的值。
+     * 经过转义后进行字符串查询
      */
     override fun containsValue(value: String): Boolean {
-        TODO("Not yet implemented")
+        if (empty) return false
+        val encodeValue: String = CQEncoder.encodeParams(value)!!
+        return codeText.contains("$CQ_KV$encodeValue$CQ_SPLIT") || codeText.contains("$CQ_KV$encodeValue$CQ_END")
     }
 
     /**
@@ -320,34 +322,17 @@ open class StringKQCode(code: String): KQCode {
     /**
      * 获取参数
      * 得到的值不是反转义的值。如果需要，再转义
+     * 参考于[KQCodeUtils.getParam]
+     * @see KQCodeUtils.getParam
      */
     private fun getParam(key: String): String? {
-//        var from = -1
-//        var end = -1
-//        var i = -1
-//        do {
-//            from = kqCodeText.indexOf(cqHead, from + 1)
-//            if (from >= 0) {
-//                // 寻找结尾
-//                end = kqCodeText.indexOf(CQ_END, from)
-//                if (end >= 0) {
-//                    i++
-//                }
-//            }
-//        } while (from >= 0 && i < index)
-
-        // 索引对上了
-//        if (i == index) {
-        // 从from开始找参数
-        val paramFind = ",$key="
+        val paramFind = "$CQ_SPLIT$key$CQ_KV"
         val phi: Int = codeText.indexOf(paramFind, startIndex)
         if (phi < 0) {
             return null
         }
-        // 找到了之后，找下一个逗号，如果没有，就用最终结尾的位置
-        val startIndex = phi + paramFind.length
-        var pei = codeText.indexOf(CQ_SPLIT, startIndex)
-        // 超出去了
+        val startIndex: Int = phi + paramFind.length
+        var pei: Int = codeText.indexOf(CQ_SPLIT, startIndex)
         if (pei < 0 || pei > endIndex) {
             pei = endIndex
         }
@@ -355,12 +340,7 @@ open class StringKQCode(code: String): KQCode {
             return null
         }
         return codeText.substring(startIndex, pei)
-//        } else {
-//            return null
-//        }
     }
-
-
 
 
 }
