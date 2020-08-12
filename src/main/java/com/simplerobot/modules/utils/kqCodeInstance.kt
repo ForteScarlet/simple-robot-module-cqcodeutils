@@ -348,4 +348,7 @@ open class StringKQCode(code: String) : KQCode {
 }
 
 
-
+/**
+ * [StringKQCode]的可变参数子类，通过操作字符串来控制变量
+ */
+class MutableStringKQCode
