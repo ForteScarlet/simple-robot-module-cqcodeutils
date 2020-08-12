@@ -32,17 +32,19 @@ object CQDecoder {
     val instance = this
 
     /** 非CQ码文本消息解义 */
-    fun decodeText(str: String?) =
-            str?.replace("&amp;", "&")
-                    ?.replace("&#91;", "[")
-                    ?.replace("&#93;", "]")
+    fun decodeText(str: String?): String? {
+        return if(str != null){
+            str.replace("&amp;", "&")
+                    .replace("&#91;", "[")
+                    .replace("&#93;", "]")
+        }else null
+    }
 
     /** CQ码参数值消息解义 */
-    fun decodeParams(str: String?) =
-            str?.replace("&amp;", "&")
-                    ?.replace("&#91;", "[")
-                    ?.replace("&#93;", "]")
-                    ?.replace("&#44;", ",")
+    fun decodeParams(str: String?): String? {
+        return str?.replace("&amp;", "&")?.replace("&#91;", "[")?.replace("&#93;", "]")?.replace("&#44;", ",")
+    }
+
 }
 
 /** encoder */
@@ -78,10 +80,10 @@ object CQEncoder {
  */
 object KQCodeUtils {
 
-    private const val CQ_HEAD = "[CQ:"
-    private const val CQ_END = "]"
-    private const val CQ_SPLIT = ","
-    private const val CQ_KV = "="
+//    private const val CQ_HEAD = "[CQ:"
+//    private const val CQ_END = "]"
+//    private const val CQ_SPLIT = ","
+//    private const val CQ_KV = "="
 
     /** string template */
     val stringTemplate: CodeTemplate<String> = KQCodeStringTemplate
@@ -136,28 +138,28 @@ object KQCodeUtils {
      * 获取无参数的[KQCode]
      * @param type cq码的类型
      */
-    fun toKq(type: String): KQCode = KQCode(type)
+    fun toKq(type: String): KQCode = MapKQCode(type)
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, params: Map<String, *>): KQCode = KQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
+    fun toKq(type: String, params: Map<String, *>): KQCode = MapKQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, vararg params: Pair<String, *>): KQCode = KQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
+    fun toKq(type: String, vararg params: Pair<String, *>): KQCode = MapKQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param paramText 参数列表, 例如："qq=123"
      */
-    fun toKq(type: String, vararg paramText: String): KQCode = KQCode(type, *paramText)
+    fun toKq(type: String, vararg paramText: String): KQCode = MapKQCode(type, *paramText)
 
     /**
      * 将一段字符串根据字符串与CQ码来进行切割。

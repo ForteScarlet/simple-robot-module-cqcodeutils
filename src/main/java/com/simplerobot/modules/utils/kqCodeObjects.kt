@@ -17,7 +17,7 @@ package com.simplerobot.modules.utils
  * at all
  * `[CQ:at,qq=all]`
  */
-object AtAll : KQCode("at", mapOf("qq" to "all")) {
+object AtAll : MapKQCode("at", mapOf("qq" to "all")) {
     override fun toString(): String = "[CQ:at,qq=all]"
 }
 
@@ -26,7 +26,7 @@ object AtAll : KQCode("at", mapOf("qq" to "all")) {
  * 发送用的猜拳
  * `[CQ:rps]`
  */
-object Rps: KQCode("rps") {
+object Rps: MapKQCode("rps") {
     override fun toString(): String = "[CQ:rps]"
 }
 
@@ -36,7 +36,7 @@ object Rps: KQCode("rps") {
  * 发送用的骰子
  * `[CQ:dice]`
  */
-object Dice: KQCode("dice") {
+object Dice: MapKQCode("dice") {
     override fun toString(): String = "[CQ:dice]"
 }
 
@@ -45,7 +45,7 @@ object Dice: KQCode("dice") {
  * 窗口抖动，戳一戳
  * `[CQ:shake]`
  */
-object Shake: KQCode("shake"){
+object Shake: MapKQCode("shake"){
     override fun toString(): String = "[CQ:shake]"
 }
 
@@ -65,7 +65,7 @@ object Shake: KQCode("shake"){
  * @see AnonymousCompulsory
  *
  */
-object Anonymous: KQCode("anonymous", mapOf("ignore" to "true")) {
+object Anonymous: MapKQCode("anonymous", mapOf("ignore" to "true")) {
     override fun toString(): String = "[CQ:anonymous,ignore=true]"
 }
 
@@ -73,7 +73,7 @@ object Anonymous: KQCode("anonymous", mapOf("ignore" to "true")) {
  * 强制的匿名CQ码
  * @see Anonymous
  */
-object AnonymousCompulsory: KQCode("anonymous") {
+object AnonymousCompulsory: MapKQCode("anonymous") {
     override fun toString(): String = "[CQ:anonymous]"
 }
 

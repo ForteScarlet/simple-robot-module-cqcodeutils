@@ -396,36 +396,37 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
     /**
      * at别人
      */
-    override fun at(code: String): KQCode = KQCode("at", "qq" to code)
+    override fun at(code: String): KQCode = MapKQCode("at", "qq" to code)
 
-    /** kq for all */
-    private val AT_ALL: KQCode = AtAll
+//    /** kq for all */
+//    private val AT_ALL: KQCode = AtAll
+
     /**
      * at所有人
      */
-    override fun atAll(): KQCode = AT_ALL
+    override fun atAll(): KQCode = AtAll
 
     /**
      * face
      */
-    override fun face(id: String): KQCode = KQCode("face", "id" to id)
+    override fun face(id: String): KQCode = MapKQCode("face", "id" to id)
 
     /**
      * big face
      */
-    override fun bface(id: String): KQCode = KQCode("bface", "id" to id)
+    override fun bface(id: String): KQCode = MapKQCode("bface", "id" to id)
 
     /**
      * small face
      */
-    override fun sface(id: String): KQCode = KQCode("sface", "id" to id)
+    override fun sface(id: String): KQCode = MapKQCode("sface", "id" to id)
 
     /**
      * image
      * @param id id
      * @param destruct true=闪图
      */
-    override fun image(id: String, destruct: Boolean): KQCode  = KQCode("image", "file" to id, "destruct" to destruct.toString())
+    override fun image(id: String, destruct: Boolean): KQCode  = MapKQCode("image", "file" to id, "destruct" to destruct.toString())
 
 
     /**
@@ -435,21 +436,10 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
      * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
      */
-    override fun record(id: String, magic: Boolean): KQCode = KQCode("record", "file" to id, "magic" to magic.toString())
+    override fun record(id: String, magic: Boolean): KQCode = MapKQCode("record", "file" to id, "magic" to magic.toString())
 
-    /** rps */
-    private val RPS: KQCode = Rps
-
-    /**
-     * rps 猜拳
-     * [CQ:rps,type={1}] - 发送猜拳魔法表情
-     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
-     * 1 - 猜拳结果为石头
-     * 2 - 猜拳结果为剪刀
-     * 3 - 猜拳结果为布
-     */
-    override fun rps(): KQCode = RPS
-
+//    /** rps */
+//    private val RPS: KQCode = Rps
 
     /**
      * rps 猜拳
@@ -459,17 +449,28 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * 2 - 猜拳结果为剪刀
      * 3 - 猜拳结果为布
      */
-    override fun rps(type: String): KQCode = KQCode("rps", "type" to type)
+    override fun rps(): KQCode = Rps
 
-    /** dice */
-    private val DICE: KQCode = Dice
+
+    /**
+     * rps 猜拳
+     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
+     * 1 - 猜拳结果为石头
+     * 2 - 猜拳结果为剪刀
+     * 3 - 猜拳结果为布
+     */
+    override fun rps(type: String): KQCode = MapKQCode("rps", "type" to type)
+
+//    /** dice */
+//    private val DICE: KQCode = Dice
 
     /**
      * 骰子
      * [CQ:dice,type={1}] - 发送掷骰子魔法表情
      * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
      */
-    override fun dice(): KQCode = DICE
+    override fun dice(): KQCode = Dice
 
 
     /**
@@ -480,19 +481,19 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * @see dice
      *
      */
-    override fun dice(type: String): KQCode = KQCode("dice", "type" to type)
+    override fun dice(type: String): KQCode = MapKQCode("dice", "type" to type)
 
 
-    private val SHAKE: KQCode = Shake
+//    private val SHAKE: KQCode = Shake
 
     /**
      * 戳一戳（原窗口抖动，仅支持好友消息使用）
      */
-    override fun shake(): KQCode = SHAKE
+    override fun shake(): KQCode = Shake
 
 
-    private val ANONYMOUS_TRUE = Anonymous
-    private val ANONYMOUS_FALSE = AnonymousCompulsory
+//    private val ANONYMOUS_TRUE = Anonymous
+//    private val ANONYMOUS_FALSE = AnonymousCompulsory
 
     /**
      * 匿名消息
@@ -504,7 +505,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * [CQ:anonymous,ignore=true]
      * [CQ:anonymous]
      */
-    override fun anonymous(ignore: Boolean): KQCode = if(ignore) ANONYMOUS_TRUE else ANONYMOUS_FALSE
+    override fun anonymous(ignore: Boolean): KQCode = if(ignore) Anonymous else AnonymousCompulsory
 
 
     /**
@@ -520,9 +521,9 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      */
     override fun music(type: String, id: String, style: String?): KQCode {
         return if (style != null) {
-            KQCode("music", "type" to type, "id" to id, "style" to style)
+            MapKQCode("music", "type" to type, "id" to id, "style" to style)
         }else{
-            KQCode("music", "type" to type, "id" to id)
+            MapKQCode("music", "type" to type, "id" to id)
         }
     }
 
@@ -538,7 +539,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      */
     override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): KQCode {
         return if(content != null && image != null){
-            KQCode("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
+            MapKQCode("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
         }else{
             val list: MutableList<Pair<String, String>> = mutableListOf("type" to "custom", "url" to url, "audio" to audio, "title" to title)
             content?.run {
@@ -547,7 +548,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
             image?.run {
                 list.add("image" to this)
             }
-            KQCode("music", *list.toTypedArray())
+            MapKQCode("music", *list.toTypedArray())
         }
     }
 
@@ -561,7 +562,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      */
     override fun share(url: String, title: String, content: String?, image: String?): KQCode {
         return if(content != null && image != null){
-            KQCode("share", "url" to url, "title" to title, "content" to content, "image" to image)
+            MapKQCode("share", "url" to url, "title" to title, "content" to content, "image" to image)
         }else{
             val list: MutableList<Pair<String, String>> = mutableListOf("url" to url, "title" to title)
             content?.run {
@@ -570,7 +571,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
             image?.run {
                 list.add("image" to this)
             }
-            KQCode("share", *list.toTypedArray())
+            MapKQCode("share", *list.toTypedArray())
         }
     }
 
@@ -582,7 +583,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {3} 分享地点的名称
      * {4} 分享地点的具体地址
      */
-    override fun location(lat: String, lon: String, title: String, content: String): KQCode = KQCode("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+    override fun location(lat: String, lon: String, title: String, content: String): KQCode = MapKQCode("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
 
 
 

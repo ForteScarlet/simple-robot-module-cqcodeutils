@@ -48,7 +48,7 @@ object KQCodeJsonUtils {
      */
     fun toJsonMap(code: KQCode): Map<String, Any> {
         val type = "type" to code.type
-        val data = "data" to code.params
+        val data = "data" to code as Map<String, String>
         return mapOf(type, data)
     }
 
@@ -66,6 +66,6 @@ internal fun String.textToJsonMap(): Map<String, Any> = mapOf("type" to "text", 
 internal fun String.cqToJsonMap(): Map<String, Any> {
     val code = KQCode.of(this)
     val type = "type" to code.type
-    val data = "data" to code.params.toMap()
+    val data = "data" to code.toMap()
     return mapOf(type, data)
 }

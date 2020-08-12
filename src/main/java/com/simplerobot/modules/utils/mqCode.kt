@@ -36,22 +36,22 @@ data class MQCode(val type: String, val param: String?): CharSequence {
         when(type){
             // atall 转化为 at
             "atall" -> AtAll
-            "at" -> KQCode(type, "qq" to param)
+            "at" -> MapKQCode(type, "qq" to param)
             // 图片
             "image" -> {
-                KQCode(type, type to param, "file" to param)
+                MapKQCode(type, type to param, "file" to param)
             }
             // voice
             "record" -> {
-                KQCode(type, type to param, "file" to param)
+                MapKQCode(type, type to param, "file" to param)
             }
             "face" -> {
-                KQCode(type, type to param, "id" to param)
+                MapKQCode(type, type to param, "id" to param)
             }
-            else -> KQCode(type, type to param)
+            else -> MapKQCode(type, type to param)
         }
     }else{
-        KQCode(type)
+        MapKQCode(type)
     }
 
     /**
@@ -59,9 +59,9 @@ data class MQCode(val type: String, val param: String?): CharSequence {
      * @see toKQCode
      */
     fun toKQCodeDoNothing() = if(param != null){
-        KQCode(type, type to param)
+        MapKQCode(type, type to param)
     }else {
-        KQCode(type)
+        MapKQCode(type)
     }
 
     /**
