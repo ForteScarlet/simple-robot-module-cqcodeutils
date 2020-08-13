@@ -20,6 +20,9 @@ const val CQ_END = "]"
 const val CQ_SPLIT = ","
 const val CQ_KV = "="
 
+internal val paramSplitRegex: Regex = Regex(" *, *")
+internal val paramKeyValueSplitRegex: Regex = Regex("=")
+
 /**
  * 定义一个不可变的KQCode标准接口
  * - KQCode实例应当实现[Map]接口，使其可以作为一个**不可变**Map使用。
@@ -59,12 +62,71 @@ interface KQCode: Map<String, String>, CharSequence {
     fun immutable(): KQCode
 
 
+    companion object Of {
+
+        @JvmStatic
+        fun of(text: String): KQCode = FastKQCode(text)
+
+        /**
+         * 从cq码字符串转到KQCode
+         *
+         * 1.8.0开始默认使用[FastKQCode]作为静态工厂方法的[KQCode]实例载体。
+         * [FastKQCode]是以字符串操作为基础的，因此不需要进行额外的转义。
+         *
+         * @since 1.1-1.11
+         * @since 1.8.0
+         * @param text CQ码字符串的正文
+         * @param decode 因为这段CQ码字符串可能已经转义过了，此处是否指定其转化的时候解码一次。默认为true
+         */
+        @JvmStatic
+        @Deprecated("just use of(text)", ReplaceWith("FastKQCode(text)", "com.simplerobot.modules.utils.FastKQCode"))
+        fun of(text: String, decode: Boolean = true): KQCode {
+            return FastKQCode(text)
+//            var tempText = text.trim()
+//            // 不是[CQ:开头，或者不是]结尾都不行
+//            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
+//                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
+//            }
+//            // 是[CQ:开头，]结尾，切割并转化
+//            tempText = tempText.substring(4, tempText.lastIndex)
+//
+//            val split = tempText.split(Regex(" *, *"))
+//
+//            val type = split[0]
+//
+//            return if (split.size > 1) {
+//                if (decode) {
+//                    // 参数解码
+//                    val map = split.subList(1, split.size).map {
+//                        val sp = it.split(Regex("="), 2)
+//                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+//                    }.toMap()
+//                    MapKQCode(map, type)
+//                } else {
+//                    MapKQCode(type, *split.subList(1, split.size).toTypedArray())
+//                }
+//            } else {
+//                MapKQCode(type)
+//            }
+
+        }
+
+        /**
+         * 从CQCode转到KQCode
+         * CQCode的转化使用[MapKQCode]作为载体。
+         * @since 1.0-1.11
+         * infix since 1.2-1.11
+         */
+        @JvmStatic
+        infix fun of(cqCode: com.forte.qqrobot.beans.cqcode.CQCode): KQCode = MapKQCode(cqCode.cqCodeTypesName, cqCode)
+    }
+
 
 }
 
 /**
  * 定义一个可变的KQCode标准接口
- * - MutableKQCode实例应当实现[MutableMap]接口，使其可以作为一个**可变**Map使用。
+ * - MutableKQCode实例应当实现[MutableMap]接口，使其可以作为一个 **可变** Map使用。
  */
 interface MutableKQCode: KQCode, MutableMap<String, String>
 

@@ -385,7 +385,7 @@ object KQCodeUtils {
     fun getKqs(text: String, type: String = "", decode: Boolean = true): Array<KQCode> {
         val iter = getCqIter(text, type)
         val list = mutableListOf<KQCode>()
-        iter.forEach { list.add(MapKQCode.of(it, decode)) }
+        iter.forEach { list.add(KQCode.of(it, decode)) }
         return list.toTypedArray()
     }
 
@@ -399,7 +399,7 @@ object KQCodeUtils {
     @JvmOverloads
     fun getKq(text: String, type: String = "", index: Int = 0, decode: Boolean = true): KQCode? {
         val cq = getCq(text, type, index) ?: return null
-        return MapKQCode.of(cq, decode)
+        return KQCode.of(cq, decode)
     }
 
     /**
