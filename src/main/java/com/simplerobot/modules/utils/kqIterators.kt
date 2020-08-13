@@ -108,7 +108,7 @@ internal class CqParamKeyIterator(code: String): BaseCqIterator<String>(code) {
 
 /**
  * 一串儿CQ码字符串中的值迭代器
- * 得到的值不会进行反转义。
+ * 得到的值会进行反转义。
  * @since 1.8.0
  */
 internal class CqParamValueIterator(code: String): BaseCqIterator<String>(code) {
@@ -139,7 +139,7 @@ internal class CqParamValueIterator(code: String): BaseCqIterator<String>(code) 
         if(nextSplit < 0){
             nextSplit = code.lastIndex
         }
-        return code.substring(index+1, nextSplit)
+        return CQDecoder.decodeParams(code.substring(index+1, nextSplit))!!
     }
 
 }
@@ -149,7 +149,7 @@ internal class CqParamValueIterator(code: String): BaseCqIterator<String>(code) 
 
 /**
  * 一串儿CQ码字符串中的键值对迭代器
- * 得到的值不会进行反转义。
+ * 得到的值会进行反转义。
  * @since 1.8.0
  */
 internal class CqParamPairIterator(code: String): BaseCqIterator<Pair<String, String>>(code) {
@@ -175,7 +175,7 @@ internal class CqParamPairIterator(code: String): BaseCqIterator<Pair<String, St
         }
         val substr = code.substring(index + 1, nextSplit)
         val keyValue = substr.split(CQ_KV)
-        return keyValue[0] to keyValue[1]
+        return keyValue[0] to CQDecoder.decodeParams(keyValue[1])!!
     }
 
 }
@@ -210,7 +210,7 @@ internal class CqParamEntryIterator(code: String): BaseCqIterator<Map.Entry<Stri
         }
         val substr = code.substring(index + 1, nextSplit)
         val keyValue = substr.split(CQ_KV)
-        return KqEntry(keyValue[0], keyValue[1])
+        return KqEntry(keyValue[0], CQDecoder.decodeParams(keyValue[1])!!)
     }
 
 }

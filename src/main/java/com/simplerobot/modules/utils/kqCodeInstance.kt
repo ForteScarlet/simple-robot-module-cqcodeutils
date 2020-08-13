@@ -281,13 +281,13 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * 获取一个解码后的值
      */
-    override fun get(key: String): String? = CQDecoder.decodeParams(getParam(key))
+    override operator fun get(key: String): String? = CQDecoder.decodeParams(getParam(key))
 
     /**
      * 获取指定字符
      * @see CharSequence.get
      */
-    override fun get(index: Int): Char = codeText[index]
+    override operator fun get(index: Int): Char = codeText[index]
 
     /**
      * 如果不存在[CQ_SPLIT]，即参数切割符，则说明不存在参数
@@ -331,15 +331,15 @@ open class FastKQCode(code: String) : KQCode {
      * Returns a read-only [Set] of all key/value pairs in this map.
      */
     override val entries: Set<Map.Entry<String, String>>
-        get() = FastKqSet()
+        get() = FastKqEntrySet()
 
 
     /**
      * [FastKQCode] 的 set内联类
      */
-    inner class FastKqSet: Set<Map.Entry<String, String>> {
+    inner class FastKqEntrySet: Set<Map.Entry<String, String>> {
         /** 键值对的长度 */
-        override val size: Int = _size
+        override val size: Int get() = _size
 
         /**
          * 查看是否包含了某个键值对
@@ -371,12 +371,7 @@ open class FastKQCode(code: String) : KQCode {
         /**
          * 键值对迭代器
          */
-        override fun iterator(): Iterator<Map.Entry<String, String>> {
-
-
-            TODO("Not yet implemented")
-        }
-
+        override fun iterator(): Iterator<Map.Entry<String, String>> = CqParamEntryIterator(_codeText)
     }
 
 
@@ -384,14 +379,94 @@ open class FastKQCode(code: String) : KQCode {
      * Returns a read-only [Set] of all keys in this map.
      */
     override val keys: Set<String>
-        get() = TODO("Not yet implemented")
+        get() = FastKqKeySet()
+
+
+    /**
+     * [keys]的实现内部类
+     */
+    inner class FastKqKeySet: Set<String> {
+        override val size: Int get() = _size
+
+        /**
+         * 是否包含某个key
+         */
+        override fun contains(element: String): Boolean {
+            if(empty) return false
+            // 判断是否包含：element= 这个字符串
+            return _codeText.contains("$element$CQ_KV")
+        }
+
+        /**
+         * 是否contains all
+         */
+        override fun containsAll(elements: Collection<String>): Boolean {
+            if(empty) return false
+            for (element in elements) {
+                if(!contains(element)) return false
+            }
+            return true
+        }
+
+        override fun isEmpty(): Boolean = this@FastKQCode.empty
+
+
+        override fun iterator(): Iterator<String> {
+            return CqParamKeyIterator(_codeText)
+        }
+
+    }
+
+
 
     /**
      * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
     override val values: Collection<String>
-        get() = TODO("Not yet implemented")
+        get() = FastKqValues()
 
+
+    /**
+     * [values]的实现。
+     * 不是任何[List]
+      */
+    inner class FastKqValues: Collection<String> {
+        /**
+         * Returns the size of the collection.
+         */
+        override val size: Int get() = _size
+
+        /**
+         * Checks if the specified element is contained in this collection.
+         */
+        override fun contains(element: String): Boolean {
+            if(empty) return false
+            // 判断有没有 '=element' 字符串
+            return _codeText.contains("$CQ_KV${CQEncoder.encodeParams(element)}")
+        }
+
+        /**
+         * Checks if all elements in the specified collection are contained in this collection.
+         */
+        override fun containsAll(elements: Collection<String>): Boolean {
+            if(empty) return false
+
+            for (element in elements) {
+                if(!contains(element)) return false
+            }
+            return true
+        }
+
+        /**
+         * Returns `true` if the collection is empty (contains no elements), `false` otherwise.
+         */
+        override fun isEmpty(): Boolean = this@FastKQCode.empty
+
+
+        override fun iterator(): Iterator<String> {
+            return CqParamValueIterator(_codeText)
+        }
+    }
 
 
 }
@@ -400,4 +475,8 @@ open class FastKQCode(code: String) : KQCode {
 /**
  * [FastKQCode]的可变参数子类，通过操作字符串来控制变量
  */
-class MutableStringKQCode
+class MutableStringKQCode {
+    init {
+        TODO()
+    }
+}
