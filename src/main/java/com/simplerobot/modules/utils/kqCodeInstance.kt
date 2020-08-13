@@ -430,6 +430,7 @@ open class FastKQCode(code: String) : KQCode {
  */
 class MutableStringKQCode {
     init {
+        // 可变的就有点麻烦了...
         TODO()
     }
 }
