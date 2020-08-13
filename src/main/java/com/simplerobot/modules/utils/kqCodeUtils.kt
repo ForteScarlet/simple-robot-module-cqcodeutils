@@ -349,57 +349,30 @@ object KQCodeUtils {
      * @param type 要获取的CQ码的类型，如果为空字符串则视为所有，默认为所有。
      */
     @JvmOverloads
-    fun getCqIter(text: String, type: String = ""): Iterator<String> = CqIterator(text, type)
+    fun getCqIter(text: String, type: String = ""): Iterator<String> = CqTextIterator(text, type)
 
 
     /**
-     * 文本CQ码迭代器
-     * @since 1.1-1.11
+     * 为一个CQ码字符串得到他的key迭代器
+     * @param code cq码字符串
+     * @since 1.8.0
      */
-    internal class CqIterator(private val text: String, private val type: String = "") : Iterator<String> {
-        private var i = -1
-        private var ti = 0
-        private var e = 0
-        private val het = CQ_HEAD + type
-        private val ent = CQ_END
-        private var next: String? = null
-        private var get = true
+    fun getCqKeyIter(code: String): Iterator<String> = CqParamKeyIterator(code)
 
-        /**
-         * Returns `true` if the iteration has more elements.
-         */
-        override fun hasNext(): Boolean {
-            if (!get) {
-                return next != null
-            }
-            get = false
-            do {
-                ti = text.indexOf(het, e)
-                if (ti >= 0) {
-                    e = text.indexOf(ent, ti)
-                    if (e >= 0) {
-                        i++
-                        next = text.substring(ti, e + 1)
-                    } else {
-                        e = ti + 1
-                    }
-                }
-            } while (next == null && (ti >= 0 && e >= 0))
+    /**
+     * 为一个CQ码字符串得到他的value迭代器
+     * @param code cq码字符串
+     * @since 1.8.0
+     */
+    fun getCqValueIter(code: String): Iterator<String> = CqParamValueIterator(code)
 
-            return next != null
-        }
 
-        /**
-         * Returns the next element in the iteration.
-         */
-        override fun next(): String {
-            val n = next
-            next = null
-            get = true
-            return n!!
-        }
-
-    }
+    /**
+     * 为一个CQ码字符串得到他的key-value的键值对迭代器
+     * @param code cq码字符串
+     * @since 1.8.0
+     */
+    fun getCqPairIter(code: String): Iterator<Pair<String, String>> = CqParamPairIterator(code)
 
     /**
      * 以[getCqIter]方法为基础获取字符串中全部的Kqs对象

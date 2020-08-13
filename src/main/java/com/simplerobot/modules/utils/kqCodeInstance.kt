@@ -204,7 +204,7 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
  * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
  * 不会对cq码字符串的格式进行校验。
  */
-open class StringKQCode(code: String) : KQCode {
+open class FastKQCode(code: String) : KQCode {
     private val _codeText: String = code.trim()
     private val _type: String
     private val _size: Int
@@ -261,24 +261,6 @@ open class StringKQCode(code: String) : KQCode {
     override fun immutable(): KQCode = this
 
     /**
-     * Returns a read-only [Set] of all key/value pairs in this map.
-     */
-    override val entries: Set<Map.Entry<String, String>>
-        get() = TODO("Not yet implemented")
-
-    /**
-     * Returns a read-only [Set] of all keys in this map.
-     */
-    override val keys: Set<String>
-        get() = TODO("Not yet implemented")
-
-    /**
-     * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
-     */
-    override val values: Collection<String>
-        get() = TODO("Not yet implemented")
-
-    /**
      * 查询cq码字符串中是否存在指定的key
      */
     override fun containsKey(key: String): Boolean {
@@ -316,6 +298,7 @@ open class StringKQCode(code: String) : KQCode {
      * Returns a new character sequence that is a subsequence of this character sequence,
      * starting at the specified [startIndex] and ending right before the specified [endIndex].
      *
+     * @see CharSequence.subSequence
      * @param startIndex the start index (inclusive).
      * @param endIndex the end index (exclusive).
      */
@@ -344,11 +327,77 @@ open class StringKQCode(code: String) : KQCode {
         return codeText.substring(startIndex, pei)
     }
 
+    /**
+     * Returns a read-only [Set] of all key/value pairs in this map.
+     */
+    override val entries: Set<Map.Entry<String, String>>
+        get() = FastKqSet()
+
+
+    /**
+     * [FastKQCode] 的 set内联类
+     */
+    inner class FastKqSet: Set<Map.Entry<String, String>> {
+        /** 键值对的长度 */
+        override val size: Int = _size
+
+        /**
+         * 查看是否包含了某个键值对
+         */
+        override fun contains(element: Map.Entry<String, String>): Boolean {
+            if(empty) return false
+
+            val kv = element.key + CQ_KV + CQEncoder.encodeParams(element.value)
+            return _codeText.contains(kv)
+        }
+
+        /**
+         * 查看是否包含所有的键值对
+         */
+        override fun containsAll(elements: Collection<Map.Entry<String, String>>): Boolean {
+            if(empty) return false
+
+            for (element in elements) {
+                if(!contains(element)) return false
+            }
+            return true
+        }
+
+        /**
+         * 是否为空set
+         */
+        override fun isEmpty(): Boolean = this@FastKQCode.empty
+
+        /**
+         * 键值对迭代器
+         */
+        override fun iterator(): Iterator<Map.Entry<String, String>> {
+
+
+            TODO("Not yet implemented")
+        }
+
+    }
+
+
+    /**
+     * Returns a read-only [Set] of all keys in this map.
+     */
+    override val keys: Set<String>
+        get() = TODO("Not yet implemented")
+
+    /**
+     * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
+     */
+    override val values: Collection<String>
+        get() = TODO("Not yet implemented")
+
+
 
 }
 
 
 /**
- * [StringKQCode]的可变参数子类，通过操作字符串来控制变量
+ * [FastKQCode]的可变参数子类，通过操作字符串来控制变量
  */
 class MutableStringKQCode
