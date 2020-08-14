@@ -320,7 +320,7 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * [FastKQCode] 的 set内联类
      */
-    inner class FastKqEntrySet : Set<Map.Entry<String, String>> {
+    private inner class FastKqEntrySet : Set<Map.Entry<String, String>> {
         /** 键值对的长度 */
         override val size: Int get() = _size
 
@@ -368,7 +368,7 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * [keys]的实现内部类
      */
-    inner class FastKqKeySet : Set<String> {
+    private inner class FastKqKeySet : Set<String> {
         override val size: Int get() = _size
 
         /**
@@ -412,7 +412,7 @@ open class FastKQCode(code: String) : KQCode {
      * [values]的实现。
      * 不是任何[List]
      */
-    inner class FastKqValues : Collection<String> {
+    private inner class FastKqValues : Collection<String> {
         /**
          * Returns the size of the collection.
          */
