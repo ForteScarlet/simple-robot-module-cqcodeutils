@@ -39,7 +39,7 @@ public class PerformanceTest_short_get {
 		String longCq = "[CQ:image,url=http://forte.love:15520/img/r]";
 
 		/* 参数获取速度 */
-		int times = 10_000_000;
+		int times = 100_0000;
 		String getParam = "url";
 		System.out.println("start-fast....");
 		long getTime_fast = getTest_fast(longCq, getParam, times);

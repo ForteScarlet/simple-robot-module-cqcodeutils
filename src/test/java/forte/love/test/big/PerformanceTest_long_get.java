@@ -41,7 +41,7 @@ public class PerformanceTest_long_get {
 		System.out.println("start-map.....");
 		long getTime_map = getTest_map(longCq, getParam, times);
 		System.out.println("getTime_map: " + getTime_map);
-		System.out.println(getTime_fast + "\t:\t" + getTime_map + "\t("+ times +")");
+		System.out.printf("%s\t:\t%s\t(%,d)", getTime_fast, getTime_map, times);
 		/*
 			fast	:	map	(times)
 			17438	:	32	(1000000)
