@@ -86,6 +86,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
         get() = toString().length
 
 
+
     /**
      * 获取转义后的字符串
      */
@@ -108,8 +109,21 @@ internal constructor(open val params: Map<String, String>, override var type: St
      */
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = toString().subSequence(startIndex, endIndex)
 
+
+    /**
+     * toString的值记录。因为是不可变类，因此toString是不会变的
+     */
+    private lateinit var _toString: String
+
     /** toString */
-    override fun toString(): String = KQCodeUtils.toCq(type, this)
+    override fun toString(): String {
+        return if(::_toString.isInitialized){
+            _toString
+        }else {
+            _toString = KQCodeUtils.toCq(type, this)
+            _toString
+        }
+    }
 
 
     /** 从KQCode转到CQCode */
@@ -212,4 +226,7 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
      * 转化为不可变类型[KQCode]
      */
     override fun immutable(): KQCode = MapKQCode(this)
+
+    /** toString */
+    override fun toString(): String = KQCodeUtils.toCq(type, this)
 }

@@ -50,6 +50,14 @@ public class PerformanceTest_long_toString {
 			1	:	10365	(10000)
 			// 这没啥悬念了，fast不存在toString转化，没有消耗
 			// map则接近了1毫秒才toString出来一个
+
+			———————————————————————— MapKQCode优化了ToString后 (家里的台式机)
+			0	:	0	(10000)
+			0	:	1	(10000)
+			1	:	0	(10000)
+			0	:	0	(10000)
+
+			// 因为对toString做了记录，现在toString的效率基本一致
 		 */
 
 
