@@ -13,6 +13,8 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.MapKQCode
+
 
 /** MQ code 封装数据类。
  * 不可变数据类。

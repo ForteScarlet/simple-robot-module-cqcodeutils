@@ -16,6 +16,8 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.MapKQCode
+
 /**
  * 定义特殊码的一些模板方法，例如at等。
  * 返回值类型全部相同

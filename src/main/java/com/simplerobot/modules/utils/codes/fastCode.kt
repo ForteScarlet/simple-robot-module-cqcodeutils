@@ -130,6 +130,13 @@ open class FastKQCode(code: String) : KQCode {
      */
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = codeText.subSequence(startIndex, endIndex)
 
+
+    /**
+     * 缓存上一次的查询结果
+     * 线程不安全的
+     */
+    private var paramBuffer: Pair<String, String>? = null
+
     /**
      * 获取参数
      * 得到的值不是反转义的值。如果需要，再转义
@@ -137,6 +144,11 @@ open class FastKQCode(code: String) : KQCode {
      * @see KQCodeUtils.getParam
      */
     private fun getParam(key: String): String? {
+        val bufferFirst = paramBuffer?.first
+        val bufferSecond = paramBuffer?.second
+        if(bufferFirst != null && bufferFirst == key){
+            return bufferSecond
+        }
         val paramFind = "$CQ_SPLIT$key$CQ_KV"
         val phi: Int = codeText.indexOf(paramFind, startIndex)
         if (phi < 0) {
@@ -150,7 +162,9 @@ open class FastKQCode(code: String) : KQCode {
         if (startIndex > codeText.lastIndex || startIndex > pei) {
             return null
         }
-        return codeText.substring(startIndex, pei)
+        val subParam = codeText.substring(startIndex, pei)
+        paramBuffer = key to subParam
+        return subParam
     }
 
     /**

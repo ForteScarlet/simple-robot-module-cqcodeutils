@@ -13,10 +13,10 @@
 
 package forte.love.test.small;
 
-import com.simplerobot.modules.utils.FastKQCode;
+import com.simplerobot.modules.utils.codes.FastKQCode;
 import com.simplerobot.modules.utils.KQCode;
 import com.simplerobot.modules.utils.KQCodeUtils;
-import com.simplerobot.modules.utils.MapKQCode;
+import com.simplerobot.modules.utils.codes.MapKQCode;
 
 import java.util.ArrayList;
 import java.util.List;

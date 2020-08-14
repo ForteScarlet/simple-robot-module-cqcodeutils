@@ -13,6 +13,8 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.MapKQCode
+
 /*
 & -> &amp;
 [ -> &#91;
