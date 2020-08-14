@@ -12,8 +12,12 @@
  */
 
 @file:Suppress("unused")
-
+@file:JvmName("KqCodeConstant")
 package com.simplerobot.modules.utils
+
+import com.simplerobot.modules.utils.codes.FastKQCode
+import com.simplerobot.modules.utils.codes.MapKQCode
+import com.simplerobot.modules.utils.codes.MutableMapKQCode
 
 const val CQ_HEAD = "[CQ:"
 const val CQ_END = "]"
