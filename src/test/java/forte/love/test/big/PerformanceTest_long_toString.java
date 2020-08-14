@@ -45,10 +45,11 @@ public class PerformanceTest_long_toString {
 			fast	:	map	(times)
 			1	:	9110	(10000)
 			0	:	8923	(10000)
-
-
-
-
+			0	:	9329	(10000)
+			1	:	9126	(10000)
+			1	:	10365	(10000)
+			// 这没啥悬念了，fast不存在toString转化，没有消耗
+			// map则接近了1毫秒才toString出来一个
 		 */
 
 
