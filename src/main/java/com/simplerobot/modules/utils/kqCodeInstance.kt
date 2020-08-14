@@ -12,8 +12,6 @@
  */
 package com.simplerobot.modules.utils
 
-import com.forte.qqrobot.beans.cqcode.CQCode
-
 
 /* ******************************************************
  *
@@ -25,6 +23,7 @@ import com.forte.qqrobot.beans.cqcode.CQCode
 /**
  * CQ码封装类, 以[Map]作为参数载体
  * @since 1.0-1.11
+ * @since 1.8.0
  */
 open class MapKQCode
 internal constructor(open val params: Map<String, String>, override var type: String) :
@@ -146,6 +145,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
 
 /**
  * [KQCode]对应的可变类型, 以[MutableMap]作为载体
+ * @since 1.8.0
  */
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 open class MutableMapKQCode
@@ -163,6 +163,42 @@ protected constructor(override val params: MutableMap<String, String>, type: Str
 
     /** internal constructor for kqCode */
     internal constructor(kqCode: KQCode) : this(kqCode.toMutableMap(), kqCode.type)
+
+    companion object Of {
+        /**
+         * 根据CQ码字符串获取[MapKQCode]实例
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun byCode(code: String, decode: Boolean = true): MapKQCode {
+            var tempText = code.trim()
+            // 不是[CQ:开头，或者不是]结尾都不行
+            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
+                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
+            }
+            // 是[CQ:开头，]结尾，切割并转化
+            tempText = tempText.substring(4, tempText.lastIndex)
+
+            val split = tempText.split(Regex(" *, *"))
+
+            val type = split[0]
+
+            return if (split.size > 1) {
+                if (decode) {
+                    // 参数解码
+                    val map = split.subList(1, split.size).map {
+                        val sp = it.split(Regex("="), 2)
+                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                    }.toMap().toMutableMap()
+                    MutableMapKQCode(map, type)
+                } else {
+                    MutableMapKQCode(type, *split.subList(1, split.size).toTypedArray())
+                }
+            } else {
+                MutableMapKQCode(type)
+            }
+        }
+    }
 
     /**
      * 转化为参数可变的[MutableKQCode]
@@ -229,7 +265,7 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
      */
-    override fun toCQCode(): CQCode = CQCode.of(codeText)
+    override fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode = com.forte.qqrobot.beans.cqcode.CQCode.of(codeText)
 
     /**
      * 转化为可变参的[MutableKQCode]
