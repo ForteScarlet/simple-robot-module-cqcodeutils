@@ -41,6 +41,42 @@ internal constructor(open val params: Map<String, String>, override var type: St
     /** internal constructor for mutable kqCode */
     internal constructor(mutableKQCode: MutableKQCode) : this(mutableKQCode.toMap(), mutableKQCode.type)
 
+    companion object Of {
+        /**
+         * 根据CQ码字符串获取[MapKQCode]实例
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun byCode(code: String, decode: Boolean = true): MapKQCode {
+            var tempText = code.trim()
+            // 不是[CQ:开头，或者不是]结尾都不行
+            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
+                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
+            }
+            // 是[CQ:开头，]结尾，切割并转化
+            tempText = tempText.substring(4, tempText.lastIndex)
+
+            val split = tempText.split(Regex(" *, *"))
+
+            val type = split[0]
+
+            return if (split.size > 1) {
+                if (decode) {
+                    // 参数解码
+                    val map = split.subList(1, split.size).map {
+                        val sp = it.split(Regex("="), 2)
+                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                    }.toMap()
+                    MapKQCode(map, type)
+                } else {
+                    MapKQCode(type, *split.subList(1, split.size).toTypedArray())
+                }
+            } else {
+                MapKQCode(type)
+            }
+        }
+    }
+
     /**
      * Returns the length of this character sequence.
      */
@@ -81,12 +117,12 @@ internal constructor(open val params: Map<String, String>, override var type: St
     /**
      * 转化为参数可变的[MutableKQCode]
      */
-    override open fun mutable(): MutableKQCode = MutableMapKQCode(this)
+    override fun mutable(): MutableKQCode = MutableMapKQCode(this)
 
     /**
      * 转化为不可变类型[KQCode]
      */
-    override open fun immutable(): KQCode = this
+    override fun immutable(): KQCode = this
 
 
     override fun equals(other: Any?): Boolean {
@@ -106,12 +142,6 @@ internal constructor(open val params: Map<String, String>, override var type: St
         result = 31 * result + type.hashCode()
         return result
     }
-
-    companion object {
-
-
-    }
-
 }
 
 /**
@@ -290,7 +320,7 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * [FastKQCode] 的 set内联类
      */
-    inner class FastKqEntrySet: Set<Map.Entry<String, String>> {
+    inner class FastKqEntrySet : Set<Map.Entry<String, String>> {
         /** 键值对的长度 */
         override val size: Int get() = _size
 
@@ -298,7 +328,7 @@ open class FastKQCode(code: String) : KQCode {
          * 查看是否包含了某个键值对
          */
         override fun contains(element: Map.Entry<String, String>): Boolean {
-            if(empty) return false
+            if (empty) return false
 
             val kv = element.key + CQ_KV + CQEncoder.encodeParams(element.value)
             return _codeText.contains(kv)
@@ -308,10 +338,10 @@ open class FastKQCode(code: String) : KQCode {
          * 查看是否包含所有的键值对
          */
         override fun containsAll(elements: Collection<Map.Entry<String, String>>): Boolean {
-            if(empty) return false
+            if (empty) return false
 
             for (element in elements) {
-                if(!contains(element)) return false
+                if (!contains(element)) return false
             }
             return true
         }
@@ -338,14 +368,14 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * [keys]的实现内部类
      */
-    inner class FastKqKeySet: Set<String> {
+    inner class FastKqKeySet : Set<String> {
         override val size: Int get() = _size
 
         /**
          * 是否包含某个key
          */
         override fun contains(element: String): Boolean {
-            if(empty) return false
+            if (empty) return false
             // 判断是否包含：element= 这个字符串
             return _codeText.contains("$element$CQ_KV")
         }
@@ -354,9 +384,9 @@ open class FastKQCode(code: String) : KQCode {
          * 是否contains all
          */
         override fun containsAll(elements: Collection<String>): Boolean {
-            if(empty) return false
+            if (empty) return false
             for (element in elements) {
-                if(!contains(element)) return false
+                if (!contains(element)) return false
             }
             return true
         }
@@ -371,7 +401,6 @@ open class FastKQCode(code: String) : KQCode {
     }
 
 
-
     /**
      * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
@@ -382,8 +411,8 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * [values]的实现。
      * 不是任何[List]
-      */
-    inner class FastKqValues: Collection<String> {
+     */
+    inner class FastKqValues : Collection<String> {
         /**
          * Returns the size of the collection.
          */
@@ -393,7 +422,7 @@ open class FastKQCode(code: String) : KQCode {
          * Checks if the specified element is contained in this collection.
          */
         override fun contains(element: String): Boolean {
-            if(empty) return false
+            if (empty) return false
             // 判断有没有 '=element' 字符串
             return _codeText.contains("$CQ_KV${CQEncoder.encodeParams(element)}")
         }
@@ -402,10 +431,10 @@ open class FastKQCode(code: String) : KQCode {
          * Checks if all elements in the specified collection are contained in this collection.
          */
         override fun containsAll(elements: Collection<String>): Boolean {
-            if(empty) return false
+            if (empty) return false
 
             for (element in elements) {
-                if(!contains(element)) return false
+                if (!contains(element)) return false
             }
             return true
         }
