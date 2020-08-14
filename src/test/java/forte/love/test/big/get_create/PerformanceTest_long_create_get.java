@@ -1,4 +1,4 @@
-package forte.love.test;
+package forte.love.test.big.get_create;
 
 import com.simplerobot.modules.utils.FastKQCode;
 import com.simplerobot.modules.utils.KQCode;
@@ -33,7 +33,7 @@ public class PerformanceTest_long_create_get {
 		String longCq = instance.toCq("test", strList.toArray(new String[0]));
 
 		/* 参数获取速度 */
-		int times = 100_0000;
+		int times = 1_0000;
 		String getParam = "param600";
 		System.out.println("start-fast....");
 		long getTime_fast = createAndGetTest_fast(longCq, getParam, times);
@@ -44,10 +44,13 @@ public class PerformanceTest_long_create_get {
 		System.out.println(getTime_fast + "\t:\t" + getTime_map + "\t("+ times +")");
 		/*
 			fast	:	map	(times)
-
-
+			752	:	17595	(10000)
+			615	:	17806	(10000)
+			562	:	16024	(10000)
+			800	:	16850	(10000)
+			666	:	16281	(10000)
+			// 看来第一组组合赛是fast胜出
 		 */
-
 
 	}
 
