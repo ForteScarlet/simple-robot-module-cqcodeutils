@@ -28,7 +28,7 @@ import com.simplerobot.modules.utils.CqParamValueIterator
 
 /**
  * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
- * 不会对cq码字符串的格式进行校验。
+ * TODO 考虑抽象化
  */
 open class FastKQCode(code: String) : KQCode {
     private val _codeText: String = code.trim()
