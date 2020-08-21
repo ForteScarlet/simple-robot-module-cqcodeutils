@@ -12,12 +12,15 @@
  */
 
 @file:Suppress("unused")
-@file:JvmName("KqCodeConstant")
+@file:JvmName("CqSymbolConstant")
+
 package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.codes.FastKQCode
 import com.simplerobot.modules.utils.codes.MapKQCode
 import com.simplerobot.modules.utils.codes.MutableMapKQCode
+
+
 
 const val CQ_HEAD = "[CQ:"
 const val CQ_END = "]"
@@ -52,6 +55,7 @@ interface KQCode: Map<String, String>, CharSequence {
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
      */
+    @Deprecated("'com.forte.qqrobot.beans.cqcode.CQCode' will be removed")
     fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode
 
     /**
@@ -188,94 +192,3 @@ data class EmptyKQCode(override val type: String): KQCode {
 
 
 
-/**
- * Params
- * @since 1.0-1.11
- */
-@KQCodeDsl
-open class Params {
-    private val plist: MutableList<Pair<String, String>> = mutableListOf()
-    var param: Pair<String, String>
-        get() = plist.last()
-        set(value) { plist.add(value) }
-
-    operator fun set(param: String, value: String) {
-        this.param = param to value
-    }
-
-    /** 添加全部 */
-    open fun addTo(kqCode: KQCode): KQCode {
-        kqCode.mutable().putAll(plist)
-        return kqCode
-    }
-
-    override fun toString(): String = plist.toString()
-}
-
-/**
- * Builder
- * @since 1.0-1.11
- */
-@KQCodeDsl
-class Builder {
-    var type: String = ""
-    internal val _params = Params()
-    var param: Pair<String, String>
-        get() = _params.param
-        set(value) { _params.param = value }
-    /** 添加全部 */
-    fun build(): KQCode {
-        val kqCode = MapKQCode(type)
-        _params.addTo(kqCode)
-        return kqCode
-    }
-
-    override fun toString(): String = "$type:$_params"
-}
-
-
-
-/**
- * DSL构建KQCode， 例如
- * ```
- *kqCode("at") {
- *param = "key1" to "1"
- *param = "key2" to "2"
- *param = "key3" to "3"
- *param = "key4" to "4"
- *}
- *
- * 其最终构建结果是[MapKqCode]实例。
- *  ```
- * @since 1.0-1.11
- */
-@KQCodeDsl
-fun kqCode(type: String, block: Params.() -> Unit): KQCode {
-    val kqCode = MapKQCode(type)
-    return Params().apply(block).addTo(kqCode)
-}
-
-/**
- * DSL构建KQCode的参数列表
- * @since 1.0-1.11
- */
-@KQCodeDsl
-fun kqCode(block: Builder.() -> Unit) = Builder().apply(block).build()
-
-/**
- * DSL构建Builder中的params, 例如
- * ```
-kqCode {
-type = "at"
-params {
-param = "qq" to "1149"
-param = "file" to "cq.jpg"
-}
-}
- * ```
- * @since 1.0-1.11
- */
-@KQCodeDsl
-fun Builder.params(block: Params.() -> Unit) {
-    this._params.apply(block)
-}

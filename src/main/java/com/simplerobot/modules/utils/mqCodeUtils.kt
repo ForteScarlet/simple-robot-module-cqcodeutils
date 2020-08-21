@@ -29,7 +29,7 @@ import com.simplerobot.modules.utils.KQCodeUtils.removeByType
  */
 object MQCodeUtils {
     @JvmStatic
-    val instance = this
+    val instance get() = this
 
     private const val MQ_HEAD = "[mirai:"
     private const val MQ_END = "]"

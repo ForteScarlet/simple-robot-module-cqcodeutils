@@ -182,7 +182,7 @@ interface CodeTemplate<T> {
  */
 object KQCodeStringTemplate: CodeTemplate<String> {
     @JvmStatic
-    val instance = this
+    val instance get() = this
     private val utils: KQCodeUtils = KQCodeUtils
     private const val AT_ALL: String = "[CQ:at,qq=all]"
     /**
@@ -394,7 +394,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
  */
 object KQCodeTemplate: CodeTemplate<KQCode> {
     @JvmStatic
-    val instance = this
+    val instance get() = this
     /**
      * at别人
      */
