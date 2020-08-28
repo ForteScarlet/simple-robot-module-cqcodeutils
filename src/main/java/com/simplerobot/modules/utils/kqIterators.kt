@@ -32,6 +32,7 @@ internal abstract class BaseCqIterator<T>(protected val code: String): Iterator<
 /**
  * 文本CQ码迭代器，从一串文本中迭代出其中的CQ码
  * @since 1.1-1.11
+ * @param map 转化器 (since 1.8.0)
  */
 internal class CqTextIterator(private val text: String, type: String = "") : Iterator<String> {
     private var i = -1
@@ -39,6 +40,7 @@ internal class CqTextIterator(private val text: String, type: String = "") : Ite
     private var e = 0
     private val het = CQ_HEAD + type
     private val ent = CQ_END
+
     private var next: String? = null
     private var get = true
 

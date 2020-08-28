@@ -1,4 +1,6 @@
-# 1.8.0
+# now
+- `KQCodeUtils`中的所有**数组**返回值均更替为**列表** (例如`split`)
+- 优化`KQCodeUtils`中部分api以可以实现更高效的代码协同 (例如`split`)
 
 
 

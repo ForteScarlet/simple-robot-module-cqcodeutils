@@ -11,6 +11,8 @@
  *
  */
 
+@file:Suppress("unused")
+
 package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.codes.MapKQCode
@@ -131,7 +133,7 @@ object KQCodeUtils {
      * 将参数转化为CQ码字符串, [params]的格式应当是xxx=xxx xxx=xxx
      * @since 1.0-1.11
      */
-    fun toCq(type: String, vararg params: String) = toCq(type, *params.map {
+    fun toCq(type: String, vararg params: String): String = toCq(type, *params.map {
         val split = it.split(Regex("="), 2)
         split[0] to split[1]
     }.toTypedArray())
@@ -168,9 +170,18 @@ object KQCodeUtils {
      * 不会有任何转义操作。
      * @since 1.1-1.11
      */
-    fun split(text: String): Array<String> {
+    fun split(text: String): List<String> = split(text) { it }
+
+    /**
+     * 将一段字符串根据字符串与CQ码来进行切割。
+     * 不会有任何转义操作。
+     * @param text 文本字符串
+     * @param map 转化函数
+     * @since 1.8.0
+     */
+    inline fun <T> split(text: String, map: (String) -> T): List<T> {
         // 准备list
-        val list = mutableListOf<String>()
+        val list: MutableList<T> = mutableListOf()
 
         val het = CQ_HEAD
         val ent = CQ_END
@@ -192,23 +203,23 @@ object KQCodeUtils {
                 // 找到了，截取。
                 // 首先截取前一段
                 if (h > 0 && (le + 1) != h) {
-                    list.add(text.substring(le + 1, h))
+                    list.add(map(text.substring(le + 1, h)))
                 }
                 // 截取cq码
-                list.add(text.substring(h, e + 1))
+                list.add(map(text.substring(h, e + 1)))
                 // 重新查询
                 text.indexOf(het, e)
             }
         }
         if (list.isEmpty()) {
-            list.add(text)
+            list.add(map(text))
         }
         if (e != text.length - 1) {
             if (e >= 0) {
-                list.add(text.substring(e + 1, text.length))
+                list.add(map(text.substring(e + 1, text.length)))
             }
         }
-        return list.toTypedArray()
+        return list
     }
 
     /**
@@ -256,32 +267,40 @@ object KQCodeUtils {
 //    @JvmOverloads
     fun getCq(text: String, index: Int = 0): String? = getCq(text = text, type = "", index = index)
 
+
     /**
      * 提取字符串中的全部CQ码字符串
      * @since 1.1-1.11
      */
     @JvmOverloads
-    fun getCqs(text: String, type: String = ""): Array<String>? {
+    fun getCqs(text: String, type: String = ""): List<String> = getCqs(text, type) { it }
+
+    /**
+     * 提取字符串中的全部CQ码字符串
+     * @since 1.8.0
+     */
+    @JvmOverloads
+    inline fun <T> getCqs(text: String, type: String = "", map: (String) -> T): List<T> {
         var ti: Int
         var e = 0
         val het = CQ_HEAD + type
         val ent = CQ_END
         // temp list
-        val list = mutableListOf<String>()
+        val list: MutableList<T> = mutableListOf()
 
         do {
             ti = text.indexOf(het, e)
             if (ti >= 0) {
                 e = text.indexOf(ent, ti)
                 if (e >= 0) {
-                    list.add(text.substring(ti, e + 1))
+                    list.add(map(text.substring(ti, e + 1)))
                 } else {
                     e = ti + 1
                 }
             }
         } while (ti >= 0 && e >= 0)
 
-        return list.toTypedArray()
+        return list
     }
 
     /**
@@ -376,6 +395,18 @@ object KQCodeUtils {
      */
     fun getCqPairIter(code: String): Iterator<Pair<String, String>> = CqParamPairIterator(code)
 
+
+    /**
+     * @see getKqs
+     */
+    @Deprecated("param 'decode' not required.")
+    fun getKqs(text: String, type: String, decode: Boolean): List<KQCode> {
+        val iter = getCqIter(text, type)
+        val list = mutableListOf<KQCode>()
+        iter.forEach { list.add(KQCode.of(it, decode)) }
+        return list
+    }
+
     /**
      * 以[getCqIter]方法为基础获取字符串中全部的Kqs对象
      * @since 1.1-1.11
@@ -384,11 +415,21 @@ object KQCodeUtils {
      * @param decode 是否对参数进行解码，一般字符串中的CQ码都是转码过的，所以默认为true
      */
     @JvmOverloads
-    fun getKqs(text: String, type: String = "", decode: Boolean = true): Array<KQCode> {
+    fun getKqs(text: String, type: String = ""): List<KQCode> {
         val iter = getCqIter(text, type)
         val list = mutableListOf<KQCode>()
-        iter.forEach { list.add(KQCode.of(it, decode)) }
-        return list.toTypedArray()
+        iter.forEach { list.add(KQCode.of(it)) }
+        return list
+    }
+
+
+    /**
+     * @see getKq
+     */
+    @Deprecated("param 'decode' not required.")
+    fun getKq(text: String, type: String = "", index: Int = 0, decode: Boolean = true): KQCode? {
+        val cq = getCq(text, type, index) ?: return null
+        return KQCode.of(cq, decode)
     }
 
     /**
@@ -399,9 +440,9 @@ object KQCodeUtils {
      * @param decode 是否解码参数。默认为true。
      */
     @JvmOverloads
-    fun getKq(text: String, type: String = "", index: Int = 0, decode: Boolean = true): KQCode? {
+    fun getKq(text: String, type: String = "", index: Int = 0): KQCode? {
         val cq = getCq(text, type, index) ?: return null
-        return KQCode.of(cq, decode)
+        return KQCode.of(cq)
     }
 
     /**
@@ -414,7 +455,13 @@ object KQCodeUtils {
      * 具体使用参考[remove] 和 [removeByType]
      * @since 1.2-1.12
      */
-    private fun removeCode(type: String, text: String, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String {
+    private fun removeCode(
+            type: String,
+            text: String,
+            trim: Boolean = true,
+            ignoreEmpty: Boolean = true,
+            delimiter: CharSequence = ""
+    ): String {
         when {
             text.isEmpty() -> {
                 return text
@@ -428,7 +475,7 @@ object KQCodeUtils {
                 var hi: Int = -1
                 var ei = -1
                 var nextHi: Int
-                var sps = 0;
+                var sps = 0
                 var sub: String
                 var next: Char
 
@@ -509,7 +556,14 @@ object KQCodeUtils {
      * @param delimiter 切割字符串
      */
     @JvmOverloads
-    fun remove(text: String, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String = removeCode("", text, trim, ignoreEmpty, delimiter)
+    fun remove(
+            text: String,
+            trim: Boolean = true,
+            ignoreEmpty: Boolean = true,
+            delimiter: CharSequence = ""
+    ): String {
+        return removeCode("", text, trim, ignoreEmpty, delimiter)
+    }
 
     /**
      * 移除某个类型的字符串中的所有的CQ码，返回字符串
@@ -521,7 +575,15 @@ object KQCodeUtils {
      * @param delimiter 切割字符串
      */
     @JvmOverloads
-    fun removeByType(type: String, text: String, trim: Boolean = true, ignoreEmpty: Boolean = true, delimiter: CharSequence = ""): String = removeCode(type, text, trim, ignoreEmpty, delimiter)
+    fun removeByType(
+            type: String,
+            text: String,
+            trim: Boolean = true,
+            ignoreEmpty: Boolean = true,
+            delimiter: CharSequence = ""
+    ): String {
+        return removeCode(type, text, trim, ignoreEmpty, delimiter)
+    }
 
 
 
