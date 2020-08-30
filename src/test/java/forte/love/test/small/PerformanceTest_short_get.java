@@ -71,7 +71,7 @@ public class PerformanceTest_short_get {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long getTest_fast(String code, String get, int times){
-		KQCode kqCode = new FastKQCode(code);
+		KQCode kqCode = FastKQCode.fastByCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.get(get);
 		}
@@ -87,7 +87,7 @@ public class PerformanceTest_short_get {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long getTest_map(String code, String get, int times){
-		KQCode kqCode = MapKQCode.mapByCode(code);
+		KQCode kqCode = MapKQCode.byCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.get(get);
 		}

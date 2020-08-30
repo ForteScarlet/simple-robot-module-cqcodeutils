@@ -2,6 +2,8 @@
 - `KQCodeUtils`中的所有**数组**返回值均更替为**列表** (例如`split`)
 - 优化`KQCodeUtils`中部分api以可以实现更高效的代码协同 (例如`split`)
 - 调整部分文件以及类的命名。一般不会对使用造成影响。
+- 隐藏`MapKQCode`与`MutableMapKQCode`的构造函数并以工厂方法替代。
+
 
 
 # 1.7.0

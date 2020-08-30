@@ -61,11 +61,11 @@ public class PerformanceTest_short_create {
 	 */
 	public static long createTest_fast(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			new FastKQCode(code);
+			FastKQCode.fastByCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			new FastKQCode(code);
+			FastKQCode.fastByCode(code);
 		}
 		return time() - s;
 	}
@@ -76,11 +76,11 @@ public class PerformanceTest_short_create {
 	 */
 	public static long createTest_map(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			MapKQCode.mapByCode(code);
+			MapKQCode.byCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			MapKQCode.mapByCode(code);
+			MapKQCode.byCode(code);
 		}
 		return time() - s;
 	}

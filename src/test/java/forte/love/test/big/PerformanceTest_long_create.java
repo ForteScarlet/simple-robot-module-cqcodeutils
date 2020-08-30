@@ -74,11 +74,11 @@ public class PerformanceTest_long_create {
 	 */
 	public static long createTest_map(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			MapKQCode.mapByCode(code);
+			MapKQCode.byCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			MapKQCode.mapByCode(code);
+			MapKQCode.byCode(code);
 		}
 		return time() - s;
 	}

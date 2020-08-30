@@ -32,19 +32,20 @@ import com.simplerobot.modules.utils.CqParamValueIterator
 /**
  * 基于字符串操作的[KQCode]实例
  *
- * [FastKQCode]没有对应以字符串操作为主的[MutableKQCode], 因此他的[mutable]方法将会使用[MutableKQCode]
+ * [FastKQCode]没有对应以字符串操作为主的[MutableKQCode], 因此他的[mutable]方法将会使用[MutableMapKQCode]
  *
  * 相比于[MapKQCode], [FastKQCode]在实例化与较短CQ码处理的消耗会更低，
  * 但是无论如何[FastKQCode.get]的速度也永远比不上hash表的速度。
  * 但是对于直接通过字符串构建一个[KQCode]来讲，[FastKQCode]无疑是消耗更低的选择。
  *
- * [FastKQCode]构建速度更快、资源消耗更少, 获取[toString]、[size]的速度更快。
+ * [FastKQCode]构建速度更快、资源消耗更少, 获取静态参数(例如[toString]、[size])的速度更快。
+ * [FastKQCode]的构建、获取静态参数速度相比较于[MapKQCode]有着几百倍的差距。
  *
+ * 但是在获取、迭代与遍历时相比较于[MapKQCode]略逊一筹。
  *
  *
  */
-open class FastKQCode private constructor(code: String) : KQCode {
-    private val _codeText: String = code.trim()
+open class FastKQCode private constructor(private val code: String) : KQCode {
     private val _type: String
     private val _size: Int
 
@@ -54,25 +55,25 @@ open class FastKQCode private constructor(code: String) : KQCode {
     private val endIndex: Int
 
     init {
-        if (!_codeText.startsWith(CQ_HEAD) || !_codeText.endsWith(CQ_END)) {
-            throw IllegalArgumentException("text \"$_codeText\" is not a cq code text.")
+        if (!this.code.startsWith(CQ_HEAD) || !this.code.endsWith(CQ_END)) {
+            throw IllegalArgumentException("text \"${this.code}\" is not a cq code text.")
         }
         // get type from string
         startIndex = CQ_HEAD.length
-        endIndex = _codeText.lastIndex
-        val firstSplitIndex: Int = _codeText.indexOf(CQ_SPLIT, startIndex)
+        endIndex = this.code.lastIndex
+        val firstSplitIndex: Int = this.code.indexOf(CQ_SPLIT, startIndex)
         // val typeEndIndex = if (firstSplitIndex < 0) _codeText.length else firstSplitIndex
-        _type = _codeText.substring(startIndex, firstSplitIndex)
+        _type = this.code.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + _type
-        empty = _codeText.contains(CQ_SPLIT)
+        empty = this.code.contains(CQ_SPLIT)
         // 计算 key-value的个数, 即计算CQ_KV的个数
         val kvChar: Char = CQ_KV.first()
-        _size = _codeText.count { it == kvChar }
+        _size = this.code.count { it == kvChar }
     }
 
-    protected open val codeText: String = _codeText
-    override fun toString(): String = _codeText
-    override val length: Int = _codeText.length
+    protected open val codeText: String = this.code
+    override fun toString(): String = this.code
+    override val length: Int = this.code.length
     override val size: Int = _size
     override val type: String = _type
 
@@ -90,7 +91,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
     /**
      * 转化为可变参的[MutableKQCode]
      */
-    override fun mutable(): MutableKQCode = MapKQCode.mutableMapByCode(this.toString())
+    override fun mutable(): MutableKQCode = MapKQCode.mutableByCode(this.toString())
 
     /**
      * 转化为不可变类型[KQCode]
@@ -199,7 +200,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
             if (empty) return false
 
             val kv = element.key + CQ_KV + CQEncoder.encodeParams(element.value)
-            return _codeText.contains(kv)
+            return this@FastKQCode.code.contains(kv)
         }
 
         /**
@@ -222,7 +223,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
         /**
          * 键值对迭代器
          */
-        override fun iterator(): Iterator<Map.Entry<String, String>> = CqParamEntryIterator(_codeText)
+        override fun iterator(): Iterator<Map.Entry<String, String>> = CqParamEntryIterator(this@FastKQCode.code)
     }
 
 
@@ -245,7 +246,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
         override fun contains(element: String): Boolean {
             if (empty) return false
             // 判断是否包含：element= 这个字符串
-            return _codeText.contains("$element$CQ_KV")
+            return this@FastKQCode.code.contains("$element$CQ_KV")
         }
 
         /**
@@ -263,7 +264,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
 
 
         override fun iterator(): Iterator<String> {
-            return CqParamKeyIterator(_codeText)
+            return CqParamKeyIterator(this@FastKQCode.code)
         }
 
     }
@@ -292,7 +293,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
         override fun contains(element: String): Boolean {
             if (empty) return false
             // 判断有没有 '=element' 字符串
-            return _codeText.contains("$CQ_KV${CQEncoder.encodeParams(element)}")
+            return this@FastKQCode.code.contains("$CQ_KV${CQEncoder.encodeParams(element)}")
         }
 
         /**
@@ -317,7 +318,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
          * iterator
          */
         override fun iterator(): Iterator<String> {
-            return CqParamValueIterator(_codeText)
+            return CqParamValueIterator(this@FastKQCode.code)
         }
     }
 
@@ -326,7 +327,7 @@ open class FastKQCode private constructor(code: String) : KQCode {
         /**
          * 得到[FastKQCode]实例的工厂方法。[code]应该是一个cq码字符串.
          */
-        @JvmStatic fun fastByCode(code: String): FastKQCode = FastKQCode(code)
+        @JvmStatic fun fastByCode(code: String): FastKQCode = FastKQCode(code.trim())
     }
 
 }

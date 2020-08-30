@@ -28,6 +28,15 @@ import com.simplerobot.modules.utils.*
 
 /**
  * CQ码封装类, 以[Map]作为参数载体
+ *
+ * [MapKQCode]通过[Map]保存各项参数，其对应的[可变类型][MutableKQCode]实例为[MutableMapKQCode],
+ * 通过[mutable]与[immutable]进行相互转化。
+ *
+ * 相比较于[FastKQCode], [MapKQCode]在进行获取、迭代与遍历的时候表现尤佳，
+ * 尤其是参数获取相比较于[FastKQCode]的参数获取速度有好几百倍的差距。
+ *
+ * 但是在实例构建与静态参数获取的时候相比于[FastKQCode]略逊一筹。
+ *
  * @since 1.0-1.11
  * @since 1.8.0
  */
@@ -35,10 +44,10 @@ open class MapKQCode
 internal constructor(open val params: Map<String, String>, override var type: String) :
         KQCode,
         Map<String, String> by params {
-    constructor(type: String) : this(emptyMap(), type)
-    constructor(type: String, params: Map<String, String>) : this(params.toMap(), type)
-    constructor(type: String, vararg params: Pair<String, String>) : this(mapOf(*params), type)
-    constructor(type: String, vararg params: String) : this(mapOf(*params.map {
+    internal constructor(type: String) : this(emptyMap(), type)
+    internal constructor(type: String, params: Map<String, String>) : this(params.toMap(), type)
+    internal constructor(type: String, vararg params: Pair<String, String>) : this(mapOf(*params), type)
+    internal constructor(type: String, vararg params: String) : this(mapOf(*params.map {
         val split = it.split(Regex("="), 2)
         split[0] to split[1]
     }.toTypedArray()), type)
@@ -79,21 +88,17 @@ internal constructor(open val params: Map<String, String>, override var type: St
 
     /**
      * toString的值记录。因为是不可变类，因此toString是不会变的
+     * 在获取的时候才会去实际计算，且仅计算一次。
      */
-    private lateinit var _toString: String
+    private val _toString: String by lazy { KQCodeUtils.toCq(type, this) }
 
     /** toString */
-    override fun toString(): String {
-        return if(::_toString.isInitialized){
-            _toString
-        }else {
-            _toString = KQCodeUtils.toCq(type, this)
-            _toString
-        }
-    }
+    override fun toString(): String = _toString
+
 
 
     /** 从KQCode转到CQCode */
+    @Suppress("OverridingDeprecatedMember")
     override fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode = com.forte.qqrobot.beans.cqcode.CQCode.of(type, mutableMapOf(*params.entries.map { it.key to CQEncoder.encodeParams(it.value) }.toTypedArray()))
 
 
@@ -121,19 +126,21 @@ internal constructor(open val params: Map<String, String>, override var type: St
     }
 
     override fun hashCode(): Int {
-        var result = params.hashCode()
+        var result: Int = params.hashCode()
         result = 31 * result + type.hashCode()
         return result
     }
 
     /** [MapKQCode] companion object. */
     companion object Of {
+        /** 参数切割用的正则 */
+        private val TEMP_SPLIT_REGEX = Regex(" *, *")
         /**
-         * 根据CQ码字符串获取[MapKQCode]实例
+         * 将CQ码字符串切割为参数列表
+         * 返回的键值对为 `type to split`
          */
-        @JvmStatic
-        @JvmOverloads
-        fun mapByCode(code: String, decode: Boolean = true): MapKQCode {
+        @Suppress("NOTHING_TO_INLINE")
+        private inline fun splitCode(code: String): Pair<String, List<String>> {
             var tempText = code.trim()
             // 不是[CQ:开头，或者不是]结尾都不行
             if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
@@ -142,9 +149,18 @@ internal constructor(open val params: Map<String, String>, override var type: St
             // 是[CQ:开头，]结尾，切割并转化
             tempText = tempText.substring(4, tempText.lastIndex)
 
-            val split = tempText.split(Regex(" *, *"))
-
+            val split = tempText.split(TEMP_SPLIT_REGEX)
             val type = split[0]
+            return type to split
+        }
+
+        /**
+         * 根据CQ码字符串获取[MapKQCode]实例
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun byCode(code: String, decode: Boolean = true): MapKQCode {
+            val (type, split) = splitCode(code)
 
             return if (split.size > 1) {
                 if (decode) {
@@ -162,23 +178,20 @@ internal constructor(open val params: Map<String, String>, override var type: St
             }
         }
 
+        /** 通过map参数获取 */
+        fun byMap(type: String, params: Map<String, String>): MapKQCode = MapKQCode(type, params)
+        /** 通过键值对获取 */
+        fun byPair(type: String, vararg params: Pair<String, String>): MapKQCode = MapKQCode(type, *params)
+        /** 通过键值对字符串获取 */
+        fun byParamString(type: String, vararg params: String): MapKQCode = MapKQCode(type, *params)
+
         /**
          * 根据CQ码字符串获取[MapKQCode]实例
          */
         @JvmStatic
         @JvmOverloads
-        fun mutableMapByCode(code: String, decode: Boolean = true): MutableKQCode {
-            var tempText = code.trim()
-            // 不是[CQ:开头，或者不是]结尾都不行
-            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
-                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
-            }
-            // 是[CQ:开头，]结尾，切割并转化
-            tempText = tempText.substring(4, tempText.lastIndex)
-
-            val split = tempText.split(Regex(" *, *"))
-
-            val type = split[0]
+        fun mutableByCode(code: String, decode: Boolean = true): MutableMapKQCode {
+            val (type, split) = splitCode(code)
 
             return if (split.size > 1) {
                 if (decode) {
@@ -195,6 +208,14 @@ internal constructor(open val params: Map<String, String>, override var type: St
                 MutableMapKQCode(type)
             }
         }
+
+
+        /** 通过map参数获取 */
+        fun mutableByMap(type: String, params: Map<String, String>): MutableMapKQCode = MutableMapKQCode(type, params)
+        /** 通过键值对获取 */
+        fun mutableByPair(type: String, vararg params: Pair<String, String>): MutableMapKQCode = MutableMapKQCode(type, *params)
+        /** 通过键值对字符串获取 */
+        fun mutableByParamString(type: String, vararg params: String): MutableMapKQCode = MutableMapKQCode(type, *params)
     }
 
 }
@@ -204,57 +225,21 @@ internal constructor(open val params: Map<String, String>, override var type: St
  * @since 1.8.0
  */
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-open class MutableMapKQCode
+class MutableMapKQCode
 internal constructor(override val params: MutableMap<String, String>, type: String) :
         MapKQCode(params, type),
         MutableKQCode,
         MutableMap<String, String> by params {
-    constructor(type: String) : this(mutableMapOf(), type)
-    constructor(type: String, params: Map<String, String>) : this(params.toMutableMap(), type)
-    constructor(type: String, vararg params: Pair<String, String>) : this(mutableMapOf(*params), type)
-    constructor(type: String, vararg params: String) : this(mutableMapOf(*params.map {
+    internal constructor(type: String) : this(mutableMapOf(), type)
+    internal constructor(type: String, params: Map<String, String>) : this(params.toMutableMap(), type)
+    internal constructor(type: String, vararg params: Pair<String, String>) : this(mutableMapOf(*params), type)
+    internal constructor(type: String, vararg params: String) : this(mutableMapOf(*params.map {
         val split = it.split(Regex("="), 2)
         split[0] to split[1]
     }.toTypedArray()), type)
 
     /** internal constructor for kqCode */
     internal constructor(kqCode: KQCode) : this(kqCode.toMutableMap(), kqCode.type)
-
-    // companion object Of {
-    //     /**
-    //      * 根据CQ码字符串获取[MapKQCode]实例
-    //      */
-    //     @JvmStatic
-    //     @JvmOverloads
-    //     fun byCode(code: String, decode: Boolean = true): MapKQCode {
-    //         var tempText = code.trim()
-    //         // 不是[CQ:开头，或者不是]结尾都不行
-    //         if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
-    //             throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
-    //         }
-    //         // 是[CQ:开头，]结尾，切割并转化
-    //         tempText = tempText.substring(4, tempText.lastIndex)
-    //
-    //         val split = tempText.split(Regex(" *, *"))
-    //
-    //         val type = split[0]
-    //
-    //         return if (split.size > 1) {
-    //             if (decode) {
-    //                 // 参数解码
-    //                 val map = split.subList(1, split.size).map {
-    //                     val sp = it.split(Regex("="), 2)
-    //                     sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
-    //                 }.toMap().toMutableMap()
-    //                 MutableMapKQCode(map, type)
-    //             } else {
-    //                 MutableMapKQCode(type, *split.subList(1, split.size).toTypedArray())
-    //             }
-    //         } else {
-    //             MutableMapKQCode(type)
-    //         }
-    //     }
-    // }
 
     /**
      * 转化为参数可变的[MutableKQCode]

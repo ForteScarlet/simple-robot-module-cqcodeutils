@@ -16,6 +16,8 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.MapKQCode
+
 
 /**
  *
@@ -65,7 +67,7 @@ class Builder {
         set(value) { _params.param = value }
     /** 添加全部 */
     fun build(): KQCode {
-        val kqCode = MapKQCode(type)
+        val kqCode = MapKQCode.byCode(type)
         _params.addTo(kqCode)
         return kqCode
     }
@@ -91,7 +93,7 @@ class Builder {
  */
 @KQCodeDsl
 fun kqCode(type: String, block: Params.() -> Unit): KQCode {
-    val kqCode = MapKQCode(type)
+    val kqCode = MapKQCode(type = type)
     return Params().apply(block).addTo(kqCode)
 }
 
