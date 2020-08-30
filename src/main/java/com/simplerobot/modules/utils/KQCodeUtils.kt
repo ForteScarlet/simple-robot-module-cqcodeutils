@@ -88,11 +88,28 @@ object CQEncoder {
 object KQCodeUtils {
 
 
-    /** string template */
+    /**
+     *  获取一个String为载体的[模板][CodeTemplate]
+     *  @see KQCodeStringTemplate
+     */
     val stringTemplate: CodeTemplate<String> get() = KQCodeStringTemplate
 
-    /** kqCode template */
+    /**
+     *  获取[KQCode]为载体的[模板][CodeTemplate]
+     *  @see KQCodeTemplate
+     */
     val kqCodeTemplate: CodeTemplate<KQCode> get() = KQCodeTemplate
+
+    /**
+     * 构建一个String为载体类型的[构建器][CodeBuilder]
+     */
+    fun stringBuilder(type: String): CodeBuilder<String> = CodeBuilder.stringBuilder(type)
+
+
+    /**
+     * 构建一个[KQCode]为载体类型的[构建器][CodeBuilder]
+     */
+    fun kqCodeBuilder(type: String): CodeBuilder<KQCode> = CodeBuilder.kqCodeBuilder(type)
 
 
     @JvmStatic
