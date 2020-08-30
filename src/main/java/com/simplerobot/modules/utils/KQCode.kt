@@ -88,7 +88,7 @@ interface KQCode: Map<String, String>, CharSequence {
          * 通过cq码字符串得到一个[KQCode]实例
          */
         @JvmStatic
-        fun of(text: String): KQCode = FastKQCode.byCode(text)
+        fun of(code: String): KQCode = FastKQCode.byCode(code)
 
         /**
          * 从cq码字符串转到KQCode
@@ -135,9 +135,12 @@ data class EmptyKQCode(override val type: String): KQCode {
 
     private val _codeText = "[CQ:$type]"
 
+    override fun toString(): String = _codeText
+
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
      */
+    @Suppress("OverridingDeprecatedMember")
     override fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode = com.forte.qqrobot.beans.cqcode.CQCode.of(type)
 
     /**

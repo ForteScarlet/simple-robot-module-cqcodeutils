@@ -63,34 +63,35 @@ interface CodeTemplate<T> {
 
     /**
      * image
-     * @param id id
+     * @param file id
      * @param destruct 闪图
      */
-    fun image(id: String, destruct: Boolean): T
+    fun image(file: String, destruct: Boolean): T
     @JvmDefault fun image(id: String): T = image(id, false)
 
 
     /**
      * 语言
-     * [CQ:record,file={1},magic={2}] - 发送语音
+     * [CQ:record,[file]={1},[magic]={2}] - 发送语音
      * {1}为音频文件名称，音频存放在酷Q目录的data\record\下
      * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
      * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
      */
-    fun record(id: String, magic: Boolean): T
+    fun record(file: String, magic: Boolean): T
     @JvmDefault fun record(id: String): T = record(id, false)
+
 
 
     /**
      * rps 猜拳
-     * [CQ:rps,type={1}] - 发送猜拳魔法表情
+     * [CQ:rps,[type]={1}] - 发送猜拳魔法表情
      * {1}为猜拳结果的类型，暂不支持发送时自定义。该参数可被忽略。
      * 1 - 猜拳结果为石头
      * 2 - 猜拳结果为剪刀
      * 3 - 猜拳结果为布
      */
-    fun rps(): T
     fun rps(type: String): T
+    fun rps(): T
     @JvmDefault fun rps(type: Int) = rps(type.toString())
 
 
@@ -178,7 +179,8 @@ interface CodeTemplate<T> {
 
 
 /**
- * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
+ * 基于 [KQCodeTemplate] 的模板实现, 以`string`作为cq码载体。
+ * 默认内置于[KQCodeUtils.kqCodeTemplate]
  */
 object KQCodeStringTemplate: CodeTemplate<String> {
     @JvmStatic
@@ -188,7 +190,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
     /**
      * at别人
      */
-    override fun at(code: String): String = utils.toCq("at", "qq" to code)
+    override fun at(code: String): String = "[CQ:at,qq=$code]" //utils.toCq("at", "qq" to code)
 
     /**
      * at所有人
@@ -198,24 +200,25 @@ object KQCodeStringTemplate: CodeTemplate<String> {
     /**
      * face
      */
-    override fun face(id: String): String = utils.toCq("face", "id" to id)
+    override fun face(id: String): String = "[CQ:face,id=$id]" // utils.toCq("face", "id" to id)
 
     /**
      * big face
      */
-    override fun bface(id: String): String = utils.toCq("bface", "id" to id)
+    override fun bface(id: String): String = "[CQ:bface,id=$id]" //utils.toCq("bface", "id" to id)
 
     /**
      * small face
      */
-    override fun sface(id: String): String = utils.toCq("sface", "id" to id)
+    override fun sface(id: String): String = "[CQ:sface,id=$id]" //utils.toCq("sface", "id" to id)
 
     /**
      * image
-     * @param id id
+     * @param file file/url/id
      * @param destruct true=闪图
      */
-    override fun image(id: String, destruct: Boolean): String  = utils.toCq("image", "file" to id, "destruct" to destruct)
+    override fun image(file: String, destruct: Boolean): String = "[CQ:image,file=$file,destruct=$destruct]"//utils.toCq("image", "file" to id, "destruct" to destruct)
+
 
 
     /**
@@ -225,7 +228,8 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
      * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
      */
-    override fun record(id: String, magic: Boolean): String = utils.toCq("record", "file" to id, "magic" to magic)
+    override fun record(file: String, magic: Boolean): String =
+        "[CQ:record,file=$file,magic=$magic]"// utils.toCq("record", "file" to id, "magic" to magic)
 
 
     /**
@@ -253,7 +257,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      * 2 - 猜拳结果为剪刀
      * 3 - 猜拳结果为布
      */
-    override fun rps(type: String): String = utils.toCq("rps", "type" to type)
+    override fun rps(type: String): String = "[CQ:rps,type=$type]"//utils.toCq("rps", "type" to type)
 
     /**
      * const val for dice
@@ -273,7 +277,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      * [CQ:dice,type={1}] - 发送掷骰子魔法表情
      * {1}对应掷出的点数，暂不支持发送时自定义。该参数可被忽略。
      */
-    override fun dice(type: String): String = utils.toCq("dice", "type" to type)
+    override fun dice(type: String): String = "[CQ:dice,type=$type]" // utils.toCq("dice", "type" to type)
 
 
     /**
@@ -316,9 +320,9 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      */
     override fun music(type: String, id: String, style: String?): String {
         return if (style != null) {
-            utils.toCq("music", "type" to type, "id" to id, "style" to style)
+            "[CQ:music,type=$type,id=$id,style=$style]" // utils.toCq("music", "type" to type, "id" to id, "style" to style)
         }else{
-            utils.toCq("music", "type" to type, "id" to id)
+            "[CQ:music,type=$type,id=$id]" // utils.toCq("music", "type" to type, "id" to id)
         }
     }
 
@@ -334,7 +338,9 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      */
     override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): String {
         return if(content != null && image != null){
-            utils.toCq("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
+            "[CQ:music,type=custom,url=$url,audio=$audio,title=$title,content=$content,image=$image]"
+            // utils.toCq("music", "type" to "custom", "url" to url, "audio" to audio,
+            // "title" to title, "content" to content, "image" to image)
         }else{
             val list: MutableList<Pair<String, Any>> = mutableListOf("type" to "custom", "url" to url, "audio" to audio, "title" to title)
             content?.run {
@@ -343,7 +349,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
             image?.run {
                 list.add("image" to this)
             }
-            utils.toCq("music", *list.toTypedArray())
+            utils.toCq("music", pair = list.toTypedArray())
         }
     }
 
@@ -357,7 +363,8 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      */
     override fun share(url: String, title: String, content: String?, image: String?): String {
         return if(content != null && image != null){
-            utils.toCq("share", "url" to url, "title" to title, "content" to content, "image" to image)
+            "[CQ:share,url=$url,title=$title,content=$content,image=$image]"
+            // utils.toCq("share", "url" to url, "title" to title, "content" to content, "image" to image)
         }else{
             val list: MutableList<Pair<String, Any>> = mutableListOf("url" to url, "title" to title)
             content?.run {
@@ -366,7 +373,7 @@ object KQCodeStringTemplate: CodeTemplate<String> {
             image?.run {
                 list.add("image" to this)
             }
-            utils.toCq("share", *list.toTypedArray())
+            utils.toCq("share", pair = list.toTypedArray())
         }
     }
 
@@ -378,7 +385,9 @@ object KQCodeStringTemplate: CodeTemplate<String> {
      * {3} 分享地点的名称
      * {4} 分享地点的具体地址
      */
-    override fun location(lat: String, lon: String, title: String, content: String): String = utils.toCq("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+    override fun location(lat: String, lon: String, title: String, content: String): String =
+        "[CQ:location,lat=$lat,lon=$lon,title=$title,content=$content]"
+    // utils.toCq("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
 }
 
 
@@ -390,7 +399,8 @@ object KQCodeStringTemplate: CodeTemplate<String> {
 
 
 /**
- * 基于 [KQCodeUtils] 的模板实现，并且默认内置于KQCodeTemplate中
+ * 基于 [KQCodeTemplate] 的模板实现, 以[KQCode]作为CQ码载体。
+ * 默认内置于[KQCodeUtils.kqCodeTemplate]
  */
 object KQCodeTemplate: CodeTemplate<KQCode> {
     @JvmStatic
@@ -425,10 +435,10 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
 
     /**
      * image
-     * @param id id
+     * @param file id
      * @param destruct true=闪图
      */
-    override fun image(id: String, destruct: Boolean): KQCode  = MapKQCode("image", "file" to id, "destruct" to destruct.toString())
+    override fun image(file: String, destruct: Boolean): KQCode  = MapKQCode("image", "file" to file, "destruct" to destruct.toString())
 
 
     /**
@@ -438,7 +448,7 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
      * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
      */
-    override fun record(id: String, magic: Boolean): KQCode = MapKQCode("record", "file" to id, "magic" to magic.toString())
+    override fun record(file: String, magic: Boolean): KQCode = MapKQCode("record", "file" to file, "magic" to magic.toString())
 
 //    /** rps */
 //    private val RPS: KQCode = Rps

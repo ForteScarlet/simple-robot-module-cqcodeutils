@@ -26,6 +26,8 @@ import com.simplerobot.modules.utils.*
  *
  *******************************************************/
 
+private val MAP_SPLIT_REGEX = Regex("=")
+
 /**
  * CQ码封装类, 以[Map]作为参数载体
  *
@@ -48,7 +50,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
     internal constructor(type: String, params: Map<String, String>) : this(params.toMap(), type)
     internal constructor(type: String, vararg params: Pair<String, String>) : this(mapOf(*params), type)
     internal constructor(type: String, vararg params: String) : this(mapOf(*params.map {
-        val split = it.split(Regex("="), 2)
+        val split = it.split(MAP_SPLIT_REGEX, 2)
         split[0] to split[1]
     }.toTypedArray()), type)
 
@@ -90,7 +92,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
      * toString的值记录。因为是不可变类，因此toString是不会变的
      * 在获取的时候才会去实际计算，且仅计算一次。
      */
-    private val _toString: String by lazy { KQCodeUtils.toCq(type, this) }
+    private val _toString: String by lazy { KQCodeUtils.toCq(type, map = this) }
 
     /** toString */
     override fun toString(): String = _toString
@@ -234,7 +236,7 @@ internal constructor(override val params: MutableMap<String, String>, type: Stri
     internal constructor(type: String, params: Map<String, String>) : this(params.toMutableMap(), type)
     internal constructor(type: String, vararg params: Pair<String, String>) : this(mutableMapOf(*params), type)
     internal constructor(type: String, vararg params: String) : this(mutableMapOf(*params.map {
-        val split = it.split(Regex("="), 2)
+        val split = it.split(MAP_SPLIT_REGEX, 2)
         split[0] to split[1]
     }.toTypedArray()), type)
 
@@ -252,5 +254,5 @@ internal constructor(override val params: MutableMap<String, String>, type: Stri
     override fun immutable(): KQCode = MapKQCode(this)
 
     /** toString */
-    override fun toString(): String = KQCodeUtils.toCq(type, this)
+    override fun toString(): String = KQCodeUtils.toCq(type, map = this)
 }

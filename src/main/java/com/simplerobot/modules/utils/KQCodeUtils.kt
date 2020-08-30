@@ -18,6 +18,7 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.FastKQCode
 import com.simplerobot.modules.utils.codes.MapKQCode
 
 /*
@@ -106,14 +107,19 @@ object KQCodeUtils {
     }
 
     /**
-     * 将参数转化为CQ码字符串
+     * 将参数转化为CQ码字符串.
+     * 如果[encode] == true, 则会对[pair]的值进行[转义][CQEncoder.encodeParams]
+     *
      * @since 1.0-1.11
      */
-    fun toCq(type: String, vararg pair: Pair<String, Any>): String {
+    @JvmOverloads
+    fun toCq(type: String, encode: Boolean = true, vararg pair: Pair<String, Any>): String {
         val pre = "${CQ_HEAD}$type"
         return if (pair.isNotEmpty()) {
             pair.joinToString(CQ_SPLIT, "$pre$CQ_SPLIT", CQ_END) {
-                "${it.first}$CQ_KV${CQEncoder.encodeParams(it.second.toString())}"
+                "${it.first}$CQ_KV${
+                    if (encode) CQEncoder.encodeParams(it.second.toString()) else it.second
+                }"
             }
         } else {
             pre + CQ_END
@@ -124,14 +130,19 @@ object KQCodeUtils {
      * 将参数转化为CQ码字符串
      * @since 1.0-1.11
      */
-    fun toCq(type: String, map: Map<String, *>): String {
+    @JvmOverloads
+    fun toCq(type: String, encode: Boolean = true, map: Map<String, *>): String {
         val pre = "$CQ_HEAD$type"
         return if (map.isNotEmpty()) {
             map.entries.joinToString(
                 CQ_SPLIT,
                 "$pre$CQ_SPLIT",
                 CQ_END
-            ) { "${it.key}$CQ_KV${CQEncoder.encodeParams(it.value.toString())}" }
+            ) {
+                "${it.key}$CQ_KV${
+                    if (encode) CQEncoder.encodeParams(it.value.toString()) else it.value
+                }"
+            }
         } else {
             pre + CQ_END
         }
@@ -144,13 +155,13 @@ object KQCodeUtils {
      * @since 1.8.0
      */
     @JvmOverloads
-    fun toCq(type: String, encode: Boolean = false, vararg params: String): String {
+    fun toCq(type: String, encode: Boolean = true, vararg params: String): String {
         // 如果参数为空
         return if (params.isNotEmpty() && encode) {
             if (encode) {
-                toCq(type, *params.map {
+                toCq(type, encode, *params.map {
                     val split = it.split(Regex("="), 2)
-                    split[0] to CQEncoder.encodeParams(split[1]) as String
+                    split[0] to split[1]
                 }.toTypedArray())
             } else {
                 // 不需要转义, 直接进行字符串拼接
@@ -165,46 +176,73 @@ object KQCodeUtils {
      * 获取无参数的[KQCode]
      * @param type cq码的类型
      */
-    fun toKq(type: String): KQCode = MapKQCode(type)
+    fun toKq(type: String): KQCode = EmptyKQCode(type)
+
+    /**
+     * 根据[Map]类型参数转化为[KQCode]实例
+     *
+     * @param type cq码的类型
+     * @param params 参数列表
+     */
+    fun toKq(type: String, params: Map<String, *>): KQCode {
+        return if (params.isEmpty()) {
+            EmptyKQCode(type)
+        } else {
+            MapKQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
+        }
+    }
+
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, params: Map<String, *>): KQCode =
-        MapKQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
+    fun toKq(type: String, vararg params: Pair<String, *>): KQCode {
+        return if (params.isEmpty()) {
+            EmptyKQCode(type)
+        } else {
+            MapKQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
+        }
+    }
 
-    /**
-     * 根据参数转化为[KQCode]实例
-     * @param type cq码的类型
-     * @param params 参数列表
-     */
-    fun toKq(type: String, vararg params: Pair<String, *>): KQCode =
-        MapKQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param paramText 参数列表, 例如："qq=123"
      */
-    fun toKq(type: String, vararg paramText: String): KQCode = MapKQCode(type, *paramText)
+    @JvmOverloads
+    fun toKq(type: String, encode: Boolean = false, vararg paramText: String): KQCode {
+        return if (paramText.isEmpty()) {
+            EmptyKQCode(type)
+        } else {
+            if (encode) {
+                FastKQCode.byCode(toCq(type, encode, *paramText))
+            } else {
+                MapKQCode.byParamString(type, *paramText)
+            }
+        }
+    }
 
     /**
      * 将一段字符串根据字符串与CQ码来进行切割。
      * 不会有任何转义操作。
      * @since 1.1-1.11
      */
-    fun split(text: String): List<String> = split(text) { it }
+    fun split(text: String): List<String> = split(text) { this }
 
     /**
-     * 将一段字符串根据字符串与CQ码来进行切割。
+     * 将一段字符串根据字符串与CQ码来进行切割,
+     * 并可以通过[postMap]对切割后的每条字符串进行后置处理。
+     *
      * 不会有任何转义操作。
+     *
      * @param text 文本字符串
-     * @param map 转化函数
+     * @param postMap 后置转化函数
      * @since 1.8.0
      */
-    inline fun <T> split(text: String, map: (String) -> T): List<T> {
+    inline fun <T> split(text: String, postMap: String.() -> T): List<T> {
         // 准备list
         val list: MutableList<T> = mutableListOf()
 
@@ -228,20 +266,20 @@ object KQCodeUtils {
                 // 找到了，截取。
                 // 首先截取前一段
                 if (h > 0 && (le + 1) != h) {
-                    list.add(map(text.substring(le + 1, h)))
+                    list.add(text.substring(le + 1, h).postMap())
                 }
                 // 截取cq码
-                list.add(map(text.substring(h, e + 1)))
+                list.add(text.substring(h, e + 1).postMap())
                 // 重新查询
                 text.indexOf(het, e)
             }
         }
         if (list.isEmpty()) {
-            list.add(map(text))
+            list.add(text.postMap())
         }
         if (e != text.length - 1) {
             if (e >= 0) {
-                list.add(map(text.substring(e + 1, text.length)))
+                list.add(text.substring(e + 1, text.length).postMap())
             }
         }
         return list
@@ -463,7 +501,6 @@ object KQCodeUtils {
      * @param text 存在CQ码的正文
      * @param type 要获取的CQ码的类型，默认为所有类型
      * @param index 获取的索引位的CQ码，默认为0，即第一个
-     * @param decode 是否解码参数。默认为true。
      */
     @JvmOverloads
     fun getKq(text: String, type: String = "", index: Int = 0): KQCode? {
