@@ -20,7 +20,7 @@ import com.forte.qqrobot.anno.depend.Beans;
  * @author ForteScarlet
  */
 @Beans
-public class KqCodeConfiguration {
+public class KQCodeConfiguration {
 
     @Beans("defaultKqCodeUtils")
     public KQCodeUtils getKqCodeUtils(){

@@ -22,8 +22,16 @@ import com.simplerobot.modules.utils.KQCodeUtils.removeByType
  * \[GroupImage]: "[mirai:image:{01E9451B-70ED-EAE3-B37C-101F1EEBF5B5}.mirai]"
  * \[FriendImage]: "[mirai:image:/f8f1ab55-bf8e-4236-b55e-955848d7069f]"
  * \[PokeMessage]: "[mirai:poke:1,-1]"
- * 类型即参数名，且参数只有一个
- * 且似乎不存在转义符
+ *
+ * mirai现在支持mirai码转义。
+ *
+ * 参考:
+ * - [mirai-serialization](https://github.com/mamoe/mirai/tree/1.1.0/mirai-serialization)
+ * - [mirai-serialization-doc](https://github.com/mamoe/mirai/blob/1.1.0/docs/mirai-code-specification.md)
+ *
+ * 参数没有参数名称, 且似乎不存在转义符
+ *
+ * 此工具类可能不一定会被保留在此模组下而是被独立于mirai组件中。
  *
  * @since
  */
