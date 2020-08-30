@@ -39,7 +39,7 @@ const val CQ_KV = "="
  * 其参数是不可变的，如果需要一个可变参数的实例，参考方法[mutable]与其返回的接口类型[MutableKQCode]
  * 如果想要获得一个纯空参的实例，参考[EmptyKQCode]
  *
- * 建议子类通过私有构造+ 静态/伴生对象 方法来获取实例，例如 [MapKQCode.byCode] [FastKQCode.fastByCode]
+ * 建议子类通过私有构造+ 静态/伴生对象 方法来获取实例，例如 [MapKQCode.byCode] [FastKQCode.byCode]
  * 而不是直接通过构造方法。
  *
  * @since 1.8.0
@@ -90,7 +90,7 @@ interface KQCode: Map<String, String>, CharSequence {
          * 通过cq码字符串得到一个[KQCode]实例
          */
         @JvmStatic
-        fun of(text: String): KQCode = FastKQCode.fastByCode(text)
+        fun of(text: String): KQCode = FastKQCode.byCode(text)
 
         /**
          * 从cq码字符串转到KQCode
@@ -106,7 +106,7 @@ interface KQCode: Map<String, String>, CharSequence {
         @JvmStatic
         @Deprecated("just use of(text)", ReplaceWith("FastKQCode(text)", "com.simplerobot.modules.utils.FastKQCode"))
         fun of(text: String, decode: Boolean = true): KQCode {
-            return FastKQCode.fastByCode(text)
+            return FastKQCode.byCode(text)
         }
 
         /**

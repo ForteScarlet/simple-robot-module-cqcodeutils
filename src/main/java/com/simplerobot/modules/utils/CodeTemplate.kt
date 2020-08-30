@@ -114,7 +114,7 @@ interface CodeTemplate<T> {
     @Deprecated("匿名消息不再是一个必须的CQ码类型, 因此不再提供模板方法，将会在未来版本中删除, 因此请尽可能避免使用。")
     fun anonymous(ignore: Boolean): T
     @JvmDefault
-    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Suppress("DeprecatedCallableAddReplaceWith", "DEPRECATION")
     @Deprecated("匿名消息不再是一个必须的CQ码类型, 因此不再提供模板方法，将会在未来版本中删除, 因此请尽可能避免使用。")
     fun anonymous(): T = anonymous(false)
 

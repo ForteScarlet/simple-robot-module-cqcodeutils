@@ -66,11 +66,11 @@ public class PerformanceTest_long_create_get {
 	 */
 	public static long createAndGetTest_fast(String code, String get, int times){
 		for (int i = 0; i < 100; i++) {
-			FastKQCode.fastByCode(code).get(get);
+			FastKQCode.byCode(code).get(get);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			FastKQCode.fastByCode(code).get(get);
+			FastKQCode.byCode(code).get(get);
 		}
 		return time() - s;
 	}

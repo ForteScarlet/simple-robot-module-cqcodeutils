@@ -61,11 +61,11 @@ public class PerformanceTest_short_create {
 	 */
 	public static long createTest_fast(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			FastKQCode.fastByCode(code);
+			FastKQCode.byCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			FastKQCode.fastByCode(code);
+			FastKQCode.byCode(code);
 		}
 		return time() - s;
 	}

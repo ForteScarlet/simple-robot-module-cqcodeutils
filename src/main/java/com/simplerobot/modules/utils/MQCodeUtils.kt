@@ -18,6 +18,7 @@ package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.KQCodeUtils.remove
 import com.simplerobot.modules.utils.KQCodeUtils.removeByType
+import com.simplerobot.modules.utils.codes.MQCode
 
 /**
  * mirai码工具类。

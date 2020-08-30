@@ -73,7 +73,7 @@ public class PerformanceTest_long_get {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long getTest_fast(String code, String get, int times){
-		KQCode kqCode = FastKQCode.fastByCode(code);
+		KQCode kqCode = FastKQCode.byCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.get(get);
 		}

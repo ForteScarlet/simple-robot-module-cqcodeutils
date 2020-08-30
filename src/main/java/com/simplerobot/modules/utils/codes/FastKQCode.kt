@@ -45,7 +45,7 @@ import com.simplerobot.modules.utils.CqParamValueIterator
  *
  *
  */
-open class FastKQCode private constructor(private val code: String) : KQCode {
+class FastKQCode private constructor(private val code: String) : KQCode {
     private val _type: String
     private val _size: Int
 
@@ -86,6 +86,7 @@ open class FastKQCode private constructor(private val code: String) : KQCode {
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
      */
+    @Suppress("OverridingDeprecatedMember")
     override fun toCQCode(): com.forte.qqrobot.beans.cqcode.CQCode = com.forte.qqrobot.beans.cqcode.CQCode.of(codeText)
 
     /**
@@ -325,9 +326,11 @@ open class FastKQCode private constructor(private val code: String) : KQCode {
 
     companion object Of {
         /**
-         * 得到[FastKQCode]实例的工厂方法。[code]应该是一个cq码字符串.
+         * 得到[FastKQCode]实例的工厂方法。
+         * [code]应该是一个cq码字符串.
          */
-        @JvmStatic fun fastByCode(code: String): FastKQCode = FastKQCode(code.trim())
+        @JvmStatic
+        fun byCode(code: String): FastKQCode = FastKQCode(code.trim())
     }
 
 }

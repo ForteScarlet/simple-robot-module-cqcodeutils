@@ -14,9 +14,9 @@
  *
  */
 
-package com.simplerobot.modules.utils
+package com.simplerobot.modules.utils.codes
 
-import com.simplerobot.modules.utils.codes.MapKQCode
+import com.simplerobot.modules.utils.KQCode
 
 
 /**

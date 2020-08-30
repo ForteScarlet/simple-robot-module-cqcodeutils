@@ -62,7 +62,7 @@ public class PerformanceTest_short_toString {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long toStringTest_fast(String code, int times){
-		KQCode kqCode = FastKQCode.fastByCode(code);
+		KQCode kqCode = FastKQCode.byCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.toString();
 		}
