@@ -94,6 +94,8 @@ public interface CodeBuilder<T> {
 /**
  * 以`String`为载体的[CodeBuilder]实现类, 需要在构建实例的时候指定[类型][type]
  *
+ * 以对字符串的拼接为主要构建形式, 且不是线程安全的。
+ *
  * 如果[encode] == true, 则会对value值进行转义
  */
 public class StringCodeBuilder
@@ -153,7 +155,11 @@ constructor(override val type: String, private val encode: Boolean = true) : Cod
 //*         KQCode Builder
 //**************************************
 
-
+/**
+ * 以[KQCode]为载体的[CodeBuilder]实现类, 需要在构建实例的时候指定[类型][type]
+ *
+ * 通过[哈希表][MutableMap]来进行[KQCode]的构建, 且不是线程安全的。
+ */
 public class KQCodeBuilder(override val type: String) : CodeBuilder<KQCode> {
 
     /** 当前参数map */

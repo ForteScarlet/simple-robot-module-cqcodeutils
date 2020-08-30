@@ -14,6 +14,8 @@
  *
  */
 
+@file:Suppress("unused")
+
 package com.simplerobot.modules.utils.codes
 
 import com.simplerobot.modules.utils.*
@@ -181,10 +183,13 @@ internal constructor(open val params: Map<String, String>, override var type: St
         }
 
         /** 通过map参数获取 */
+        @JvmStatic
         fun byMap(type: String, params: Map<String, String>): MapKQCode = MapKQCode(type, params)
         /** 通过键值对获取 */
+        @JvmStatic
         fun byPair(type: String, vararg params: Pair<String, String>): MapKQCode = MapKQCode(type, *params)
         /** 通过键值对字符串获取 */
+        @JvmStatic
         fun byParamString(type: String, vararg params: String): MapKQCode = MapKQCode(type, *params)
 
         /**
@@ -213,10 +218,13 @@ internal constructor(open val params: Map<String, String>, override var type: St
 
 
         /** 通过map参数获取 */
+        @JvmStatic
         fun mutableByMap(type: String, params: Map<String, String>): MutableMapKQCode = MutableMapKQCode(type, params)
         /** 通过键值对获取 */
+        @JvmStatic
         fun mutableByPair(type: String, vararg params: Pair<String, String>): MutableMapKQCode = MutableMapKQCode(type, *params)
         /** 通过键值对字符串获取 */
+        @JvmStatic
         fun mutableByParamString(type: String, vararg params: String): MutableMapKQCode = MutableMapKQCode(type, *params)
     }
 
@@ -224,6 +232,15 @@ internal constructor(open val params: Map<String, String>, override var type: St
 
 /**
  * [KQCode]对应的可变类型, 以[MutableMap]作为载体
+ *
+ * 目前来讲唯一的[MutableKQCode]实例. 通过[MutableMap]作为参数载体需要一定程度的资源消耗，
+ * 因此我认为最好应该避免频繁大量的使用[可变类型][MutableMap].
+ *
+ * 如果想要动态的构建一个[KQCode], 也可以试试[CodeBuilder],
+ * 其中[StringCodeBuilder]则以字符串操作为主而避免了构建内部[Map]
+ *
+ * 但是无论如何, 都最好在构建之前便决定好参数
+ *
  * @since 1.8.0
  */
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")

@@ -135,12 +135,18 @@ interface MutableKQCode: KQCode, MutableMap<String, String> {
 
 /**
  * 一个纯空参的[KQCode]实例。
+ *
+ * 此类只有**不可变**状态, 并且应当为无参[KQCode]的优先使用类。由于没有参数，因此不存在任何多余的计算与转义。
+ *
+ * 由于不存在对应的**可变状态**,
+ * 因此[mutable]所得到的实例为[com.simplerobot.modules.utils.codes.MutableMapKQCode]实例。
+ *
  */
 data class EmptyKQCode(override val type: String): KQCode {
 
-    private val _codeText = "[CQ:$type]"
+    private val codeText = "[CQ:$type]"
 
-    override fun toString(): String = _codeText
+    override fun toString(): String = codeText
 
     /**
      * 从[KQCode]转化为[com.forte.qqrobot.beans.cqcode.CQCode]
@@ -151,7 +157,7 @@ data class EmptyKQCode(override val type: String): KQCode {
     /**
      * 转化为可变参的[MutableKQCode]
      */
-    override fun mutable(): MutableKQCode = MapKQCode.mutableByCode(_codeText)
+    override fun mutable(): MutableKQCode = MapKQCode.mutableByCode(codeText)
 
     /**
      * 转化为不可变类型[KQCode]
@@ -165,10 +171,10 @@ data class EmptyKQCode(override val type: String): KQCode {
     override fun containsValue(value: String): Boolean = false
     override operator fun get(key: String): String? = null
     override fun getNoDecode(key: String): String? = null
-    override val length: Int = _codeText.length
-    override operator fun get(index: Int): Char = _codeText[index]
+    override val length: Int = codeText.length
+    override operator fun get(index: Int): Char = codeText[index]
     override fun isEmpty(): Boolean = true
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = _codeText.subSequence(startIndex, endIndex)
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = codeText.subSequence(startIndex, endIndex)
 }
 
 
