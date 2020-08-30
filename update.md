@@ -1,8 +1,10 @@
-# now
+# 1.8.0
+### BETA.1
 - `KQCodeUtils`中的所有**数组**返回值均更替为**列表** (例如`split`)
 
 - 增加接口定义`CodeBuilder<T>`及其默认实现类, 以实现通过更明了高效的方式构建一个任意参数的CQ码。
 具体使用方式可去参考文档或代码注释。
+- `KQCodeUtils`增加用于获取`CodeBuilder`的对应方法
 
 - 优化`KQCodeUtils`内部分api以可以实现更高效的代码协同 (例如`split`)
 - 调整部分文件以及类的命名。一般不会对使用造成影响
@@ -10,6 +12,9 @@
 
 - 隐藏`MapKQCode`与`MutableMapKQCode`的构造函数并以工厂方法替代
 - 隐藏`KQCodeUtils`中不应存在的字段实体
+
+### BETA.2
+- `MutableKQCode`的type变更为可变类型
 
 
 

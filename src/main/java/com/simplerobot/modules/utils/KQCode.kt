@@ -124,7 +124,12 @@ interface KQCode: Map<String, String>, CharSequence {
  * 定义一个可变的KQCode标准接口
  * - MutableKQCode实例应当实现[MutableMap]接口，使其可以作为一个 **可变** Map使用。
  */
-interface MutableKQCode: KQCode, MutableMap<String, String>
+interface MutableKQCode: KQCode, MutableMap<String, String> {
+    /**
+     * type 也是可变类型
+     */
+    override var type: String
+}
 
 
 
