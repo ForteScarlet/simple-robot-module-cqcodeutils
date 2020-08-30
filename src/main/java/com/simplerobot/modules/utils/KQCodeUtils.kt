@@ -103,13 +103,13 @@ object KQCodeUtils {
     /**
      * 构建一个String为载体类型的[构建器][CodeBuilder]
      */
-    fun stringBuilder(type: String): CodeBuilder<String> = CodeBuilder.stringBuilder(type)
+    fun getStringBuilder(type: String): CodeBuilder<String> = CodeBuilder.stringBuilder(type)
 
 
     /**
      * 构建一个[KQCode]为载体类型的[构建器][CodeBuilder]
      */
-    fun kqCodeBuilder(type: String): CodeBuilder<KQCode> = CodeBuilder.kqCodeBuilder(type)
+    fun getKQCodeBuilder(type: String): CodeBuilder<KQCode> = CodeBuilder.kqCodeBuilder(type)
 
 
     @JvmStatic

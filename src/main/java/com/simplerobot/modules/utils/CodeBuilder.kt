@@ -75,11 +75,13 @@ public interface CodeBuilder<T> {
         /**
          * 获取一个以字符串为cq码载体的[构建器][CodeBuilder]实例, 需要提供[类型][type]参数
          */
+        @JvmStatic
         fun stringBuilder(type: String): CodeBuilder<String> = StringCodeBuilder(type)
 
         /**
          * 获取一个以[KQCode]为cq码载体的[构建器][CodeBuilder]实例, 需要提供[类型][type]参数
          */
+        @JvmStatic
         fun kqCodeBuilder(type: String): CodeBuilder<KQCode> = KQCodeBuilder(type)
     }
 
