@@ -36,20 +36,21 @@ import com.simplerobot.modules.utils.codes.MapKQCode
 object CQDecoder {
 
     @JvmStatic
-    val instance get() = this
+    val instance
+        get() = this
 
     /** 非CQ码文本消息解义 */
     fun decodeText(str: String?): String? =
-            str?.replace("&amp;", "&")
-                    ?.replace("&#91;", "[")
-                    ?.replace("&#93;", "]")
+        str?.replace("&amp;", "&")
+            ?.replace("&#91;", "[")
+            ?.replace("&#93;", "]")
 
     /** CQ码参数值消息解义 */
     fun decodeParams(str: String?): String? =
-            str?.replace("&amp;", "&")
-                   ?.replace("&#91;", "[")
-                   ?.replace("&#93;", "]")
-                   ?.replace("&#44;", ",")
+        str?.replace("&amp;", "&")
+            ?.replace("&#91;", "[")
+            ?.replace("&#93;", "]")
+            ?.replace("&#44;", ",")
 
 }
 
@@ -57,27 +58,25 @@ object CQDecoder {
 object CQEncoder {
 
     @JvmStatic
-    val instance get() = this
+    val instance
+        get() = this
 
     /** 非CQ码文本消息转义 */
     fun encodeText(str: String?): String? =
-            str?.replace("&", "&amp;")
-                    ?.replace("[", "&#91;")
-                    ?.replace("]", "&#93;")
+        str?.replace("&", "&amp;")
+            ?.replace("[", "&#91;")
+            ?.replace("]", "&#93;")
 
 
     /** CQ码参数值消息转义 */
     fun encodeParams(str: String?): String? =
-            str?.replace("&", "&amp;")
-                    ?.replace("[", "&#91;")
-                    ?.replace("]", "&#93;")
-                    ?.replace(",", "&#44;")
+        str?.replace("&", "&amp;")
+            ?.replace("[", "&#91;")
+            ?.replace("]", "&#93;")
+            ?.replace(",", "&#44;")
 
 
 }
-
-
-
 
 
 /**
@@ -87,21 +86,21 @@ object CQEncoder {
  */
 object KQCodeUtils {
 
-//    private const val CQ_HEAD = "[CQ:"
-//    private const val CQ_END = "]"
-//    private const val CQ_SPLIT = ","
-//    private const val CQ_KV = "="
 
     /** string template */
-    val stringTemplate: CodeTemplate<String> = KQCodeStringTemplate
+    val stringTemplate: CodeTemplate<String> get() = KQCodeStringTemplate
 
     /** kqCode template */
-    val kqCodeTemplate: CodeTemplate<KQCode> = KQCodeTemplate
+    val kqCodeTemplate: CodeTemplate<KQCode> get() = KQCodeTemplate
 
 
     @JvmStatic
-    val instance get() = this
+    val instance
+        get() = this
 
+    /**
+     * 仅通过一个类型获取一个CQ码。例如`\[CQ:hi]`
+     */
     fun toCq(type: String): String {
         return "$CQ_HEAD$type$CQ_END"
     }
@@ -113,7 +112,9 @@ object KQCodeUtils {
     fun toCq(type: String, vararg pair: Pair<String, Any>): String {
         val pre = "${CQ_HEAD}$type"
         return if (pair.isNotEmpty()) {
-            pair.joinToString(CQ_SPLIT, "$pre$CQ_SPLIT", CQ_END) { "${it.first}$CQ_KV${CQEncoder.encodeParams(it.second.toString())}" }
+            pair.joinToString(CQ_SPLIT, "$pre$CQ_SPLIT", CQ_END) {
+                "${it.first}$CQ_KV${CQEncoder.encodeParams(it.second.toString())}"
+            }
         } else {
             pre + CQ_END
         }
@@ -124,22 +125,41 @@ object KQCodeUtils {
      * @since 1.0-1.11
      */
     fun toCq(type: String, map: Map<String, *>): String {
-        val pre = "${CQ_HEAD}$type"
+        val pre = "$CQ_HEAD$type"
         return if (map.isNotEmpty()) {
-            map.entries.joinToString(CQ_SPLIT, "$pre$CQ_SPLIT", CQ_END) { "${it.key}$CQ_KV${CQEncoder.encodeParams(it.value.toString())}" }
+            map.entries.joinToString(
+                CQ_SPLIT,
+                "$pre$CQ_SPLIT",
+                CQ_END
+            ) { "${it.key}$CQ_KV${CQEncoder.encodeParams(it.value.toString())}" }
         } else {
             pre + CQ_END
         }
     }
 
     /**
-     * 将参数转化为CQ码字符串, [params]的格式应当是xxx=xxx xxx=xxx
-     * @since 1.0-1.11
+     * 将参数转化为CQ码字符串, [params]的格式应当是`xxx=xxx`
+     * 如果[encode] == true, 则说明需要对`=`后的值进行转义。
+     * 如果[encode] == false, 则不会对参数值进行转义，直接拼接为CQ字符串
+     * @since 1.8.0
      */
-    fun toCq(type: String, vararg params: String): String = toCq(type, *params.map {
-        val split = it.split(Regex("="), 2)
-        split[0] to split[1]
-    }.toTypedArray())
+    @JvmOverloads
+    fun toCq(type: String, encode: Boolean = false, vararg params: String): String {
+        // 如果参数为空
+        return if (params.isNotEmpty() && encode) {
+            if (encode) {
+                toCq(type, *params.map {
+                    val split = it.split(Regex("="), 2)
+                    split[0] to CQEncoder.encodeParams(split[1]) as String
+                }.toTypedArray())
+            } else {
+                // 不需要转义, 直接进行字符串拼接
+                "$CQ_HEAD$type$CQ_SPLIT${params.joinToString(CQ_SPLIT)}$CQ_END"
+            }
+        } else {
+            "$CQ_HEAD$type$CQ_END"
+        }
+    }
 
     /**
      * 获取无参数的[KQCode]
@@ -152,14 +172,16 @@ object KQCodeUtils {
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, params: Map<String, *>): KQCode = MapKQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
+    fun toKq(type: String, params: Map<String, *>): KQCode =
+        MapKQCode(type, params.asSequence().map { it.key to it.value.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
      * @param type cq码的类型
      * @param params 参数列表
      */
-    fun toKq(type: String, vararg params: Pair<String, *>): KQCode = MapKQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
+    fun toKq(type: String, vararg params: Pair<String, *>): KQCode =
+        MapKQCode(type, params.asSequence().map { it.first to it.second.toString() }.toMap())
 
     /**
      * 根据参数转化为[KQCode]实例
@@ -313,7 +335,8 @@ object KQCodeUtils {
      * 默认情况下获取第一个CQ码的参数
      * @since 1.1-1.11
      */
-    fun getParam(text: String, paramKey: String, index: Int = 0): String? = getParam(text = text, paramKey = paramKey, type = "", index = index)
+    fun getParam(text: String, paramKey: String, index: Int = 0): String? =
+        getParam(text = text, paramKey = paramKey, type = "", index = index)
 
     /**
      * 获取文本中的CQ码的参数。
@@ -459,11 +482,11 @@ object KQCodeUtils {
      * @since 1.2-1.12
      */
     private fun removeCode(
-            type: String,
-            text: String,
-            trim: Boolean = true,
-            ignoreEmpty: Boolean = true,
-            delimiter: CharSequence = ""
+        type: String,
+        text: String,
+        trim: Boolean = true,
+        ignoreEmpty: Boolean = true,
+        delimiter: CharSequence = ""
     ): String {
         when {
             text.isEmpty() -> {
@@ -486,7 +509,7 @@ object KQCodeUtils {
                     return text
                 }
 
-                if(!text.contains(head)){
+                if (!text.contains(head)) {
                     return text
                 }
 
@@ -560,10 +583,10 @@ object KQCodeUtils {
      */
     @JvmOverloads
     fun remove(
-            text: String,
-            trim: Boolean = true,
-            ignoreEmpty: Boolean = true,
-            delimiter: CharSequence = ""
+        text: String,
+        trim: Boolean = true,
+        ignoreEmpty: Boolean = true,
+        delimiter: CharSequence = ""
     ): String {
         return removeCode("", text, trim, ignoreEmpty, delimiter)
     }
@@ -579,15 +602,14 @@ object KQCodeUtils {
      */
     @JvmOverloads
     fun removeByType(
-            type: String,
-            text: String,
-            trim: Boolean = true,
-            ignoreEmpty: Boolean = true,
-            delimiter: CharSequence = ""
+        type: String,
+        text: String,
+        trim: Boolean = true,
+        ignoreEmpty: Boolean = true,
+        delimiter: CharSequence = ""
     ): String {
         return removeCode(type, text, trim, ignoreEmpty, delimiter)
     }
-
 
 
 }

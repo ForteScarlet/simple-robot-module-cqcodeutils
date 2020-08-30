@@ -28,8 +28,6 @@ const val CQ_END = "]"
 const val CQ_SPLIT = ","
 const val CQ_KV = "="
 
-//internal val paramSplitRegex: Regex = Regex(" *, *")
-//internal val paramKeyValueSplitRegex: Regex = Regex("=")
 
 /**
  * 定义一个不可变的KQCode标准接口
