@@ -1,8 +1,24 @@
+/*
+ *
+ * Copyright (c) 2020. ForteScarlet All rights reserved.
+ * Project  simple-robot-module-cqcodeutils
+ *  File     KQIterators.kt
+ *  data     2020-08-30
+ *
+ * You can contact the author through the following channels:
+ * github https://github.com/ForteScarlet
+ * gitee  https://gitee.com/ForteScarlet
+ * email  ForteScarlet@163.com
+ * QQ     1149159218
+ *
+ *
+ */
+
 package com.simplerobot.modules.utils
 
 
 /**
- * 以基于字符串截取为思想原理的kq迭代器父类
+ * 基于字符串操作的kq迭代器父类
  */
 internal abstract class BaseCqIterator<T>(protected val code: String): Iterator<T> {
     init {
@@ -32,7 +48,6 @@ internal abstract class BaseCqIterator<T>(protected val code: String): Iterator<
 /**
  * 文本CQ码迭代器，从一串文本中迭代出其中的CQ码
  * @since 1.1-1.11
- * @param map 转化器 (since 1.8.0)
  */
 internal class CqTextIterator(private val text: String, type: String = "") : Iterator<String> {
     private var i = -1

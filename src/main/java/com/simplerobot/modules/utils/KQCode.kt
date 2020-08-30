@@ -1,13 +1,16 @@
 /*
+ *
  * Copyright (c) 2020. ForteScarlet All rights reserved.
- * Project  mod-cqcodeutils
- * File     KQCode.kt
+ * Project  simple-robot-module-cqcodeutils
+ *  File     KQCode.kt
+ *  data     2020-08-30
  *
  * You can contact the author through the following channels:
  * github https://github.com/ForteScarlet
  * gitee  https://gitee.com/ForteScarlet
  * email  ForteScarlet@163.com
  * QQ     1149159218
+ *
  *
  */
 
@@ -18,8 +21,6 @@ package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.codes.FastKQCode
 import com.simplerobot.modules.utils.codes.MapKQCode
-import com.simplerobot.modules.utils.codes.MutableMapKQCode
-
 
 
 const val CQ_HEAD = "[CQ:"
@@ -37,6 +38,9 @@ const val CQ_KV = "="
  *
  * 其参数是不可变的，如果需要一个可变参数的实例，参考方法[mutable]与其返回的接口类型[MutableKQCode]
  * 如果想要获得一个纯空参的实例，参考[EmptyKQCode]
+ *
+ * 建议子类通过私有构造+ 静态/伴生对象 方法来获取实例，例如 [MapKQCode.mapByCode] [FastKQCode.fastByCode]
+ * 而不是直接通过构造方法。
  *
  * @since 1.8.0
  */
@@ -61,7 +65,6 @@ interface KQCode: Map<String, String>, CharSequence {
     /**
      * 与其他字符序列拼接为[Msgs]实例
      */
-//    @JvmDefault
     operator fun plus(other: CharSequence): Msgs = Msgs(collection = listOf(this, other))
 
     /**
@@ -77,8 +80,17 @@ interface KQCode: Map<String, String>, CharSequence {
 
     companion object Of {
 
+        /**
+         * 得到一个空参的[KQCode]实例。
+         */
         @JvmStatic
-        fun of(text: String): KQCode = FastKQCode(text)
+        fun empty(type: String): KQCode = EmptyKQCode(type)
+
+        /**
+         * 通过cq码字符串得到一个[KQCode]实例
+         */
+        @JvmStatic
+        fun of(text: String): KQCode = FastKQCode.fastByCode(text)
 
         /**
          * 从cq码字符串转到KQCode
@@ -94,34 +106,7 @@ interface KQCode: Map<String, String>, CharSequence {
         @JvmStatic
         @Deprecated("just use of(text)", ReplaceWith("FastKQCode(text)", "com.simplerobot.modules.utils.FastKQCode"))
         fun of(text: String, decode: Boolean = true): KQCode {
-            return FastKQCode(text)
-//            var tempText = text.trim()
-//            // 不是[CQ:开头，或者不是]结尾都不行
-//            if (!tempText.startsWith("[CQ:") || !tempText.endsWith("]")) {
-//                throw IllegalArgumentException("not starts with '[CQ:' or not ends with ']'")
-//            }
-//            // 是[CQ:开头，]结尾，切割并转化
-//            tempText = tempText.substring(4, tempText.lastIndex)
-//
-//            val split = tempText.split(Regex(" *, *"))
-//
-//            val type = split[0]
-//
-//            return if (split.size > 1) {
-//                if (decode) {
-//                    // 参数解码
-//                    val map = split.subList(1, split.size).map {
-//                        val sp = it.split(Regex("="), 2)
-//                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
-//                    }.toMap()
-//                    MapKQCode(map, type)
-//                } else {
-//                    MapKQCode(type, *split.subList(1, split.size).toTypedArray())
-//                }
-//            } else {
-//                MapKQCode(type)
-//            }
-
+            return FastKQCode.fastByCode(text)
         }
 
         /**
@@ -144,6 +129,7 @@ interface KQCode: Map<String, String>, CharSequence {
 interface MutableKQCode: KQCode, MutableMap<String, String>
 
 
+
 /**
  * 一个纯空参的[KQCode]实例。
  */
@@ -158,9 +144,8 @@ data class EmptyKQCode(override val type: String): KQCode {
 
     /**
      * 转化为可变参的[MutableKQCode]
-     * // TODO maybe ... fast kqCode ?
      */
-    override fun mutable(): MutableKQCode = MutableMapKQCode.byCode(_codeText) as MutableKQCode
+    override fun mutable(): MutableKQCode = MapKQCode.mutableMapByCode(_codeText)
 
     /**
      * 转化为不可变类型[KQCode]

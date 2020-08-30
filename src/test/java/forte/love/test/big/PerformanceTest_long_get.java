@@ -89,7 +89,7 @@ public class PerformanceTest_long_get {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long getTest_map(String code, String get, int times){
-		KQCode kqCode = MapKQCode.byCode(code);
+		KQCode kqCode = MapKQCode.mapByCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.get(get);
 		}

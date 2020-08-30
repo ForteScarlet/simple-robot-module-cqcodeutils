@@ -1,13 +1,16 @@
 /*
+ *
  * Copyright (c) 2020. ForteScarlet All rights reserved.
- * Project  mod-cqcodeutils
- * File     codeTemplate.kt
+ * Project  simple-robot-module-cqcodeutils
+ *  File     CodeTemplate.kt
+ *  data     2020-08-30
  *
  * You can contact the author through the following channels:
  * github https://github.com/ForteScarlet
  * gitee  https://gitee.com/ForteScarlet
  * email  ForteScarlet@163.com
  * QQ     1149159218
+ *
  *
  */
 
@@ -107,16 +110,13 @@ interface CodeTemplate<T> {
 
     /**
      * 匿名消息
-     * [CQ:anonymous,ignore={1}] - 匿名发消息（仅支持群消息使用）
-     * 本CQ码需加在消息的开头。
-     * 当{1}为true时，代表不强制使用匿名，如果匿名失败将转为普通消息发送。
-     * 当{1}为false或ignore参数被忽略时，代表强制使用匿名，如果匿名失败将取消该消息的发送。
-     * 举例：
-     * [CQ:anonymous,ignore=true]
-     * [CQ:anonymous]
      */
+    @Deprecated("匿名消息不再是一个必须的CQ码类型, 因此不再提供模板方法，将会在未来版本中删除, 因此请尽可能避免使用。")
     fun anonymous(ignore: Boolean): T
-    @JvmDefault fun anonymous(): T = anonymous(false)
+    @JvmDefault
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("匿名消息不再是一个必须的CQ码类型, 因此不再提供模板方法，将会在未来版本中删除, 因此请尽可能避免使用。")
+    fun anonymous(): T = anonymous(false)
 
     /**
      * 音乐

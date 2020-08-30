@@ -1,7 +1,7 @@
 package forte.love.test.big;
 
-import com.simplerobot.modules.utils.codes.FastKQCode;
 import com.simplerobot.modules.utils.KQCodeUtils;
+import com.simplerobot.modules.utils.codes.FastKQCode;
 import com.simplerobot.modules.utils.codes.MapKQCode;
 
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import java.util.List;
 /**
  *
  * 测试
- * {@link com.simplerobot.modules.utils.FastKQCode}
+ * {@link FastKQCode}
  * 与
- * {@link com.simplerobot.modules.utils.MapKQCode}
+ * {@link MapKQCode}
  * 的性能差异并寻找其各自的优势
  *
  * 此类测试长CQ下两个类的实例化速度
@@ -59,11 +59,11 @@ public class PerformanceTest_long_create {
 	 */
 	public static long createTest_fast(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			new FastKQCode(code);
+			FastKQCode.fastByCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			new FastKQCode(code);
+			FastKQCode.fastByCode(code);
 		}
 		return time() - s;
 	}
@@ -74,11 +74,11 @@ public class PerformanceTest_long_create {
 	 */
 	public static long createTest_map(String code, int times){
 		for (int i = 0; i < 100; i++) {
-			MapKQCode.byCode(code);
+			MapKQCode.mapByCode(code);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			MapKQCode.byCode(code);
+			MapKQCode.mapByCode(code);
 		}
 		return time() - s;
 	}

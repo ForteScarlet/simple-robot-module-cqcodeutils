@@ -1,13 +1,16 @@
 /*
+ *
  * Copyright (c) 2020. ForteScarlet All rights reserved.
- * Project  mod-cqcodeutils
- * File     fastCode.kt
+ * Project  simple-robot-module-cqcodeutils
+ *  File     FastKQCode.kt
+ *  data     2020-08-30
  *
  * You can contact the author through the following channels:
  * github https://github.com/ForteScarlet
  * gitee  https://gitee.com/ForteScarlet
  * email  ForteScarlet@163.com
  * QQ     1149159218
+ *
  *
  */
 
@@ -27,10 +30,20 @@ import com.simplerobot.modules.utils.CqParamValueIterator
  *******************************************************/
 
 /**
- * 基于[KQCodeUtils]的字符串操作的[KQCode]实例
- * TODO 考虑抽象化
+ * 基于字符串操作的[KQCode]实例
+ *
+ * [FastKQCode]没有对应以字符串操作为主的[MutableKQCode], 因此他的[mutable]方法将会使用[MutableKQCode]
+ *
+ * 相比于[MapKQCode], [FastKQCode]在实例化与较短CQ码处理的消耗会更低，
+ * 但是无论如何[FastKQCode.get]的速度也永远比不上hash表的速度。
+ * 但是对于直接通过字符串构建一个[KQCode]来讲，[FastKQCode]无疑是消耗更低的选择。
+ *
+ * [FastKQCode]构建速度更快、资源消耗更少, 获取[toString]、[size]的速度更快。
+ *
+ *
+ *
  */
-open class FastKQCode(code: String) : KQCode {
+open class FastKQCode private constructor(code: String) : KQCode {
     private val _codeText: String = code.trim()
     private val _type: String
     private val _size: Int
@@ -47,13 +60,13 @@ open class FastKQCode(code: String) : KQCode {
         // get type from string
         startIndex = CQ_HEAD.length
         endIndex = _codeText.lastIndex
-        val firstSplitIndex = _codeText.indexOf(CQ_SPLIT, startIndex)
-        val typeEndIndex = if (firstSplitIndex < 0) _codeText.length else firstSplitIndex
+        val firstSplitIndex: Int = _codeText.indexOf(CQ_SPLIT, startIndex)
+        // val typeEndIndex = if (firstSplitIndex < 0) _codeText.length else firstSplitIndex
         _type = _codeText.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + _type
         empty = _codeText.contains(CQ_SPLIT)
         // 计算 key-value的个数, 即计算CQ_KV的个数
-        val kvChar = CQ_KV.first()
+        val kvChar: Char = CQ_KV.first()
         _size = _codeText.count { it == kvChar }
     }
 
@@ -77,9 +90,7 @@ open class FastKQCode(code: String) : KQCode {
     /**
      * 转化为可变参的[MutableKQCode]
      */
-    override fun mutable(): MutableKQCode {
-        TODO("Not yet implemented")
-    }
+    override fun mutable(): MutableKQCode = MapKQCode.mutableMapByCode(this.toString())
 
     /**
      * 转化为不可变类型[KQCode]
@@ -302,21 +313,25 @@ open class FastKQCode(code: String) : KQCode {
         override fun isEmpty(): Boolean = this@FastKQCode.empty
 
 
+        /**
+         * iterator
+         */
         override fun iterator(): Iterator<String> {
             return CqParamValueIterator(_codeText)
         }
     }
 
 
-}
-
-
-/**
- * [FastKQCode]的可变参数子类，通过操作字符串来控制变量
- */
-class MutableStringKQCode {
-    init {
-        // 可变的就有点麻烦了...
-        TODO()
+    companion object Of {
+        /**
+         * 得到[FastKQCode]实例的工厂方法。[code]应该是一个cq码字符串.
+         */
+        @JvmStatic fun fastByCode(code: String): FastKQCode = FastKQCode(code)
     }
+
 }
+
+
+
+
+

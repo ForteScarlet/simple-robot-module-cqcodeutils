@@ -14,11 +14,7 @@
 package forte.love.test.small;
 
 import com.simplerobot.modules.utils.codes.FastKQCode;
-import com.simplerobot.modules.utils.KQCodeUtils;
 import com.simplerobot.modules.utils.codes.MapKQCode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -92,11 +88,11 @@ public class PerformanceTest_short_create_get {
 	 */
 	public static long createAndGetTest_map(String code, String get, int times){
 		for (int i = 0; i < 100; i++) {
-			MapKQCode.byCode(code).get(get);
+			MapKQCode.mapByCode(code).get(get);
 		}
 		long s = time();
 		for (int i = 0; i < times; i++) {
-			MapKQCode.byCode(code).get(get);
+			MapKQCode.mapByCode(code).get(get);
 		}
 		return time() - s;
 	}

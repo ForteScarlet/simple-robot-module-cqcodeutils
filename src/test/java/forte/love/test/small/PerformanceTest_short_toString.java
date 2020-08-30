@@ -15,11 +15,7 @@ package forte.love.test.small;
 
 import com.simplerobot.modules.utils.codes.FastKQCode;
 import com.simplerobot.modules.utils.KQCode;
-import com.simplerobot.modules.utils.KQCodeUtils;
 import com.simplerobot.modules.utils.codes.MapKQCode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -82,7 +78,7 @@ public class PerformanceTest_short_toString {
 	 * 开始之前都会有100次的预热
 	 */
 	public static long toStringTest_map(String code, int times){
-		KQCode kqCode = MapKQCode.byCode(code);
+		KQCode kqCode = MapKQCode.mapByCode(code);
 		for (int i = 0; i < 100; i++) {
 			kqCode.toString();
 		}
