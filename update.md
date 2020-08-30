@@ -15,6 +15,7 @@
 
 ### BETA.2
 - `MutableKQCode`的type变更为可变类型
+- 标注部分方法为`static`
 
 
 
