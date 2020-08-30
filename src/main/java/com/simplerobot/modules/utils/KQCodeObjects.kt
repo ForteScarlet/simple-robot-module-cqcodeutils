@@ -16,24 +16,25 @@
 
 package com.simplerobot.modules.utils
 
+import com.simplerobot.modules.utils.codes.FastKQCode
 import com.simplerobot.modules.utils.codes.MapKQCode
+
+/*
+    提供一些可以作为单例使用的[KQCode]实例
+ */
 
 /**
  * at all
  * `[CQ:at,qq=all]`
  */
-object AtAll : MapKQCode("at", mapOf("qq" to "all")) {
-    override fun toString(): String = "[CQ:at,qq=all]"
-}
+object AtAll : KQCode by FastKQCode.byCode("[CQ:at,qq=all]")
 
 /**
  * rps 猜拳
  * 发送用的猜拳
  * `[CQ:rps]`
  */
-object Rps: MapKQCode("rps") {
-    override fun toString(): String = "[CQ:rps]"
-}
+object Rps : KQCode by EmptyKQCode("rps")
 
 
 /**
@@ -41,18 +42,14 @@ object Rps: MapKQCode("rps") {
  * 发送用的骰子
  * `[CQ:dice]`
  */
-object Dice: MapKQCode("dice") {
-    override fun toString(): String = "[CQ:dice]"
-}
+object Dice : KQCode by EmptyKQCode("dice")
 
 
 /**
  * 窗口抖动，戳一戳
  * `[CQ:shake]`
  */
-object Shake: MapKQCode("shake"){
-    override fun toString(): String = "[CQ:shake]"
-}
+object Shake : KQCode by EmptyKQCode("shake")
 
 /**
  * 匿名消息
@@ -70,17 +67,18 @@ object Shake: MapKQCode("shake"){
  * @see AnonymousCompulsory
  *
  */
-object Anonymous: MapKQCode("anonymous", mapOf("ignore" to "true")) {
-    override fun toString(): String = "[CQ:anonymous,ignore=true]"
-}
+object Anonymous : KQCode by FastKQCode.byCode("[CQ:anonymous,ignore=true]")
+
+/**
+ * ignore参数为false的[Anonymous]
+ */
+object AnonymousNoIgnore : KQCode by FastKQCode.byCode("[CQ:anonymous,ignore=false]")
 
 /**
  * 强制的匿名CQ码
  * @see Anonymous
  */
-object AnonymousCompulsory: MapKQCode("anonymous") {
-    override fun toString(): String = "[CQ:anonymous]"
-}
+object AnonymousCompulsory : KQCode by EmptyKQCode("[CQ:anonymous]")
 
 
 

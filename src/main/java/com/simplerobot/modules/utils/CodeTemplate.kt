@@ -19,7 +19,7 @@
 
 package com.simplerobot.modules.utils
 
-import com.simplerobot.modules.utils.codes.MapKQCode
+import com.simplerobot.modules.utils.codes.FastKQCode
 
 /**
  * 定义特殊码的一些模板方法，例如at等。
@@ -182,6 +182,7 @@ interface CodeTemplate<T> {
  * 基于 [KQCodeTemplate] 的模板实现, 以`string`作为cq码载体。
  * 默认内置于[KQCodeUtils.kqCodeTemplate]
  */
+@Suppress("OverridingDeprecatedMember")
 object KQCodeStringTemplate: CodeTemplate<String> {
     @JvmStatic
     val instance get() = this
@@ -402,13 +403,14 @@ object KQCodeStringTemplate: CodeTemplate<String> {
  * 基于 [KQCodeTemplate] 的模板实现, 以[KQCode]作为CQ码载体。
  * 默认内置于[KQCodeUtils.kqCodeTemplate]
  */
+@Suppress("OverridingDeprecatedMember")
 object KQCodeTemplate: CodeTemplate<KQCode> {
     @JvmStatic
     val instance get() = this
     /**
      * at别人
      */
-    override fun at(code: String): KQCode = MapKQCode("at", "qq" to code)
+    override fun at(code: String): KQCode = FastKQCode.byCode(KQCodeStringTemplate.at(code))
 
 //    /** kq for all */
 //    private val AT_ALL: KQCode = AtAll
@@ -421,24 +423,25 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
     /**
      * face
      */
-    override fun face(id: String): KQCode = MapKQCode("face", "id" to id)
+    override fun face(id: String): KQCode = FastKQCode.byCode(KQCodeStringTemplate.face(id))
 
     /**
      * big face
      */
-    override fun bface(id: String): KQCode = MapKQCode("bface", "id" to id)
+    override fun bface(id: String): KQCode = FastKQCode.byCode(KQCodeStringTemplate.bface(id))
 
     /**
      * small face
      */
-    override fun sface(id: String): KQCode = MapKQCode("sface", "id" to id)
+    override fun sface(id: String): KQCode = FastKQCode.byCode(KQCodeStringTemplate.sface(id))
 
     /**
      * image
      * @param file id
      * @param destruct true=闪图
      */
-    override fun image(file: String, destruct: Boolean): KQCode  = MapKQCode("image", "file" to file, "destruct" to destruct.toString())
+    override fun image(file: String, destruct: Boolean): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.image(file, destruct))
 
 
     /**
@@ -448,7 +451,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {2}为是否为变声，若该参数为true则显示变声标记。该参数可被忽略。
      * 举例：[CQ:record,file=1.silk，magic=true]（发送data\record\1.silk，并标记为变声）
      */
-    override fun record(file: String, magic: Boolean): KQCode = MapKQCode("record", "file" to file, "magic" to magic.toString())
+    override fun record(file: String, magic: Boolean): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.record(file, magic))
 
 //    /** rps */
 //    private val RPS: KQCode = Rps
@@ -472,7 +476,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * 2 - 猜拳结果为剪刀
      * 3 - 猜拳结果为布
      */
-    override fun rps(type: String): KQCode = MapKQCode("rps", "type" to type)
+    override fun rps(type: String): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.rps(type))
 
 //    /** dice */
 //    private val DICE: KQCode = Dice
@@ -493,7 +498,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * @see dice
      *
      */
-    override fun dice(type: String): KQCode = MapKQCode("dice", "type" to type)
+    override fun dice(type: String): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.dice(type))
 
 
 //    private val SHAKE: KQCode = Shake
@@ -531,13 +537,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * [CQ:music,type=qq,id=422594]（发送一首QQ音乐的“Time after time”歌曲到群内）
      * [CQ:music,type=163,id=28406557]（发送一首网易云音乐的“桜咲く”歌曲到群内）
      */
-    override fun music(type: String, id: String, style: String?): KQCode {
-        return if (style != null) {
-            MapKQCode("music", "type" to type, "id" to id, "style" to style)
-        }else{
-            MapKQCode("music", "type" to type, "id" to id)
-        }
-    }
+    override fun music(type: String, id: String, style: String?): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.music(type, id, style))
 
     /**
      * [CQ:music,type=custom,url={1},audio={2},title={3},content={4},image={5}] - 发送音乐自定义分享
@@ -549,20 +550,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * @param image  {5}为音乐的封面图片链接。若参数为空或被忽略，则显示默认图片。
      *
      */
-    override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): KQCode {
-        return if(content != null && image != null){
-            MapKQCode("music", "type" to "custom", "url" to url, "audio" to audio, "title" to title, "content" to content, "image" to image)
-        }else{
-            val list: MutableList<Pair<String, String>> = mutableListOf("type" to "custom", "url" to url, "audio" to audio, "title" to title)
-            content?.run {
-                list.add("content" to this)
-            }
-            image?.run {
-                list.add("image" to this)
-            }
-            MapKQCode("music", *list.toTypedArray())
-        }
-    }
+    override fun customMusic(url: String, audio: String, title: String, content: String?, image: String?): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.customMusic(url, audio, title, content, image))
 
     /**
      * [CQ:share,url={1},title={2},content={3},image={4}] - 发送链接分享
@@ -572,20 +561,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {4}为分享的图片链接。若参数为空或被忽略，则显示默认图片。
      * 注意：链接分享只能作为单独的一条消息发送
      */
-    override fun share(url: String, title: String, content: String?, image: String?): KQCode {
-        return if(content != null && image != null){
-            MapKQCode("share", "url" to url, "title" to title, "content" to content, "image" to image)
-        }else{
-            val list: MutableList<Pair<String, String>> = mutableListOf("url" to url, "title" to title)
-            content?.run {
-                list.add("content" to this)
-            }
-            image?.run {
-                list.add("image" to this)
-            }
-            MapKQCode("share", *list.toTypedArray())
-        }
-    }
+    override fun share(url: String, title: String, content: String?, image: String?): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.share(url, title, content, image))
 
     /**
      * 地点
@@ -595,7 +572,8 @@ object KQCodeTemplate: CodeTemplate<KQCode> {
      * {3} 分享地点的名称
      * {4} 分享地点的具体地址
      */
-    override fun location(lat: String, lon: String, title: String, content: String): KQCode = MapKQCode("location", "lat" to lat, "lon" to lon, "title" to title, "content" to content)
+    override fun location(lat: String, lon: String, title: String, content: String): KQCode =
+        FastKQCode.byCode(KQCodeStringTemplate.location(lat, lon, title, content))
 
 
 
