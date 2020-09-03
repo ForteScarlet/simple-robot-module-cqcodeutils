@@ -17,6 +17,9 @@
 - `MutableKQCode`的type变更为可变类型
 - 标注部分方法为`static`
 
+### BETA.3
+- `CQEncoder` 与 `CQDecoder` 中可空与非空分离
+
 
 
 # 1.7.0

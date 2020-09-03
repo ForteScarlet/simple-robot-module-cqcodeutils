@@ -33,7 +33,8 @@ import com.simplerobot.modules.utils.codes.MapKQCode
 , -> &#44;
  */
 
-/** decoder */
+/** CQ Decoder */
+@Suppress("MemberVisibilityCanBePrivate")
 object CQDecoder {
 
     @JvmStatic
@@ -41,21 +42,29 @@ object CQDecoder {
         get() = this
 
     /** 非CQ码文本消息解义 */
-    fun decodeText(str: String?): String? =
-        str?.replace("&amp;", "&")
-            ?.replace("&#91;", "[")
-            ?.replace("&#93;", "]")
+    fun decodeText(str: String): String =
+        str.replace("&amp;", "&")
+            .replace("&#91;", "[")
+            .replace("&#93;", "]")
+
+    /** 非CQ码文本消息解义，如果[str]为null则返回null */
+    fun decodeTextOrNull(str: String?) : String? = str?.let { decodeText(it) }
+
 
     /** CQ码参数值消息解义 */
-    fun decodeParams(str: String?): String? =
-        str?.replace("&amp;", "&")
-            ?.replace("&#91;", "[")
-            ?.replace("&#93;", "]")
-            ?.replace("&#44;", ",")
+    fun decodeParams(str: String): String =
+        str.replace("&amp;", "&")
+            .replace("&#91;", "[")
+            .replace("&#93;", "]")
+            .replace("&#44;", ",")
+
+    /** CQ码参数值消息解义，如果[str]为null则返回null */
+    fun decodeParamsOrNull(str: String?): String? = str?.let { decodeParams(it) }
 
 }
 
-/** encoder */
+/** CQ Encoder */
+@Suppress("MemberVisibilityCanBePrivate")
 object CQEncoder {
 
     @JvmStatic
@@ -63,19 +72,23 @@ object CQEncoder {
         get() = this
 
     /** 非CQ码文本消息转义 */
-    fun encodeText(str: String?): String? =
-        str?.replace("&", "&amp;")
-            ?.replace("[", "&#91;")
-            ?.replace("]", "&#93;")
+    fun encodeText(str: String): String =
+        str.replace("&", "&amp;")
+            .replace("[", "&#91;")
+            .replace("]", "&#93;")
 
+    /** 非CQ码文本消息转义。如果[str]为null则返回null */
+    fun encodeTextOrNull(str: String?): String? = str?.let { encodeText(it) }
 
     /** CQ码参数值消息转义 */
-    fun encodeParams(str: String?): String? =
-        str?.replace("&", "&amp;")
-            ?.replace("[", "&#91;")
-            ?.replace("]", "&#93;")
-            ?.replace(",", "&#44;")
+    fun encodeParams(str: String): String =
+        str.replace("&", "&amp;")
+            .replace("[", "&#91;")
+            .replace("]", "&#93;")
+            .replace(",", "&#44;")
 
+    /** CQ码参数值消息转义。如果[str]为null则返回null */
+    fun encodeParamsOrNull(str: String?): String? = str?.let { encodeParams(it) }
 
 }
 
@@ -480,6 +493,7 @@ object KQCodeUtils {
     /**
      * @see getKqs
      */
+    @Suppress("DEPRECATION")
     @Deprecated("param 'decode' not required.")
     fun getKqs(text: String, type: String, decode: Boolean): List<KQCode> {
         val iter = getCqIter(text, type)
@@ -493,12 +507,11 @@ object KQCodeUtils {
      * @since 1.1-1.11
      * @param text 存在CQ码正文的文本
      * @param type 要获取的CQ码的类型，如果为空字符串则视为所有，默认为所有。
-     * @param decode 是否对参数进行解码，一般字符串中的CQ码都是转码过的，所以默认为true
      */
     @JvmOverloads
     fun getKqs(text: String, type: String = ""): List<KQCode> {
-        val iter = getCqIter(text, type)
-        val list = mutableListOf<KQCode>()
+        val iter: Iterator<String> = getCqIter(text, type)
+        val list: MutableList<KQCode> = mutableListOf()
         iter.forEach { list.add(KQCode.of(it)) }
         return list
     }
@@ -507,6 +520,7 @@ object KQCodeUtils {
     /**
      * @see getKq
      */
+    @Suppress("DEPRECATION")
     @Deprecated("param 'decode' not required.")
     fun getKq(text: String, type: String = "", index: Int = 0, decode: Boolean = true): KQCode? {
         val cq = getCq(text, type, index) ?: return null
@@ -521,13 +535,14 @@ object KQCodeUtils {
      */
     @JvmOverloads
     fun getKq(text: String, type: String = "", index: Int = 0): KQCode? {
-        val cq = getCq(text, type, index) ?: return null
+        val cq: String = getCq(text, type, index) ?: return null
         return KQCode.of(cq)
     }
 
     /**
      * 获取指定索引位的cq码，并封装类KQ对象
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     fun getKq(text: String, index: Int = 0): KQCode? = getKq(text = text, type = "", index = index)
 
     /**
