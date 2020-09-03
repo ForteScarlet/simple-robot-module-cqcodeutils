@@ -19,7 +19,7 @@
 
 ### BETA.3
 - `CQEncoder` 与 `CQDecoder` 中可空与非空分离
-
+- 简单优化`MQCode`与`KQCode`的相互转化
 
 
 # 1.7.0

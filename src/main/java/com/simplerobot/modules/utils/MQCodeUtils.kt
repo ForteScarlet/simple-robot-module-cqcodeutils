@@ -53,7 +53,9 @@ object MQCodeUtils {
      * 官方并不会解析mirai（至少现在没有），因此此方法意义不大
      * @param type 类型，也是参数名
      */
-    fun toMq(type: String, param: String) = "$MQ_HEAD$type:$param$MQ_END"
+    fun toMq(type: String, vararg param: String) = "$MQ_HEAD$type${
+        if(param.isEmpty()) "" else ":${param.joinToString(",")}"
+    }$MQ_END"
 
 
     /**
@@ -74,17 +76,16 @@ object MQCodeUtils {
         }
 
         val t: String
-        val value: String?
+        val value: MutableList<String> = mutableListOf()
 
         if(i2 < 0){
             t = str.substring(i1 + 1, end)
-            value = null
         }else{
             t = str.substring(i1 + 1, i2)
-            value = str.substring(i2 + 1, end)
+            value.addAll(str.substring(i2 + 1, end).split(","))
         }
 
-        return MQCode(t, value)
+        return MQCode(t, value.toTypedArray())
     }
 
     /**

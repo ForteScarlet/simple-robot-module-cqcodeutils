@@ -74,7 +74,7 @@ constructor(val type: String, val param: Array<String> = arrayOf()) : CharSequen
      */
     fun toKQCode() = if (param.isNotEmpty()) {
         val paramList: MutableList<Pair<String, String>> = mutableListOf()
-        paramList.add(type to param[0])
+        paramList.add(type to param.joinToString(","))
         param.forEachIndexed { i, p ->
             paramList.add("param$i" to p)
         }

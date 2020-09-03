@@ -70,7 +70,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
     /**
      * 获取转义后的字符串
      */
-    override fun getNoDecode(key: String) = CQEncoder.encodeParams(this[key])
+    override fun getNoDecode(key: String) = CQEncoder.encodeParamsOrNull(this[key])
 
     /**
      * Returns the character at the specified [index] in this character sequence.

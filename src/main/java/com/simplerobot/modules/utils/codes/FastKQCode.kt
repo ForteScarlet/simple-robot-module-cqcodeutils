@@ -120,7 +120,7 @@ class FastKQCode private constructor(private val code: String) : KQCode {
     /**
      * 获取一个解码后的值
      */
-    override operator fun get(key: String): String? = CQDecoder.decodeParams(getParam(key))
+    override operator fun get(key: String): String? = CQDecoder.decodeParamsOrNull(getParam(key))
 
     /**
      * 获取指定字符
