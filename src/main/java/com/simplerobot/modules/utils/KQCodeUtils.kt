@@ -33,6 +33,8 @@ import com.simplerobot.modules.utils.codes.MapKQCode
 , -> &#44;
  */
 
+private val CQ_SPLIT_REGEX: Regex = Regex(CQ_KV)
+
 /** CQ Decoder */
 @Suppress("MemberVisibilityCanBePrivate")
 object CQDecoder {
@@ -190,7 +192,7 @@ object KQCodeUtils {
         return if (params.isNotEmpty() && encode) {
             if (encode) {
                 toCq(type, encode, *params.map {
-                    val split = it.split(Regex("="), 2)
+                    val split: List<String> = it.split(CQ_SPLIT_REGEX, 2)
                     split[0] to split[1]
                 }.toTypedArray())
             } else {
