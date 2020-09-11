@@ -1,5 +1,5 @@
 # 1.8.0
-### -BETA.1
+### BETA.1
 - `KQCodeUtils`中的所有**数组**返回值均更替为**列表** (例如`split`)
 
 - 增加接口定义`CodeBuilder<T>`及其默认实现类, 以实现通过更明了高效的方式构建一个任意参数的CQ码。
@@ -13,13 +13,16 @@
 - 隐藏`MapKQCode`与`MutableMapKQCode`的构造函数并以工厂方法替代
 - 隐藏`KQCodeUtils`中不应存在的字段实体
 
-### -BETA.2
+### BETA.2
 - `MutableKQCode`的type变更为可变类型
 - 标注部分方法为`static`
 
-### -BETA.3
+### BETA.3
 - `CQEncoder` 与 `CQDecoder` 中可空与非空分离
 - 简单优化`MQCode`与`KQCode`的相互转化
+
+### release
+- 固定版本
 
 
 # 1.7.0
