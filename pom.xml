@@ -19,7 +19,7 @@
     <properties>
         <core.version>1.15.1</core.version>
 
-        <mirai.version>1.2.2</mirai.version>
+        <mirai.version>1.2.3</mirai.version>
 
         <kotlin.version>1.4.10</kotlin.version>
         <kotlinx-serialization.version>1.0.0-RC</kotlinx-serialization.version>

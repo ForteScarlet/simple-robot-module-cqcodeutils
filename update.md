@@ -22,7 +22,9 @@
 - 简单优化`MQCode`与`KQCode`的相互转化
 
 ### release
+- kotlin更新至`v1.4.10`
 - 固定版本
+
 
 
 # 1.7.0
