@@ -13,7 +13,7 @@
     <groupId>io.github.ForteScarlet.simple-robot-module</groupId>
     <artifactId>mod-cqcodeutils</artifactId>
 
-    <!-- 1.8.0 BETA.3  -->
+    <!-- 1.8.0 -->
     <version>1.8.0</version>
 
     <properties>
