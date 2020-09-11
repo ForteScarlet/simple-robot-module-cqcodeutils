@@ -45,7 +45,7 @@ import com.simplerobot.modules.utils.CqParamValueIterator
  *
  *
  */
-class FastKQCode private constructor(private val code: String) : KQCode {
+open class FastKQCode private constructor(private val code: String) : KQCode {
     private val _type: String
     private val _size: Int
 
@@ -71,7 +71,7 @@ class FastKQCode private constructor(private val code: String) : KQCode {
         _size = this.code.count { it == kvChar }
     }
 
-    protected open val codeText: String = this.code
+    private val codeText: String = this.code
     override fun toString(): String = this.code
     override val length: Int = this.code.length
     override val size: Int = _size
@@ -113,7 +113,7 @@ class FastKQCode private constructor(private val code: String) : KQCode {
      */
     override fun containsValue(value: String): Boolean {
         if (empty) return false
-        val encodeValue: String = CQEncoder.encodeParams(value)!!
+        val encodeValue: String = CQEncoder.encodeParams(value)
         return codeText.contains("$CQ_KV$encodeValue$CQ_SPLIT") || codeText.contains("$CQ_KV$encodeValue$CQ_END")
     }
 

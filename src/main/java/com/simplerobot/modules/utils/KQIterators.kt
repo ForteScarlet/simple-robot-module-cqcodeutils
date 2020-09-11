@@ -156,7 +156,7 @@ internal class CqParamValueIterator(code: String): BaseCqIterator<String>(code) 
         if(nextSplit < 0){
             nextSplit = code.lastIndex
         }
-        return CQDecoder.decodeParams(code.substring(index+1, nextSplit))!!
+        return CQDecoder.decodeParams(code.substring(index+1, nextSplit))
     }
 
 }
@@ -192,7 +192,7 @@ internal class CqParamPairIterator(code: String): BaseCqIterator<Pair<String, St
         }
         val substr = code.substring(index + 1, nextSplit)
         val keyValue = substr.split(CQ_KV)
-        return keyValue[0] to CQDecoder.decodeParams(keyValue[1])!!
+        return keyValue[0] to CQDecoder.decodeParams(keyValue[1])
     }
 
 }
@@ -227,7 +227,7 @@ internal class CqParamEntryIterator(code: String): BaseCqIterator<Map.Entry<Stri
         }
         val substr = code.substring(index + 1, nextSplit)
         val keyValue = substr.split(CQ_KV)
-        return KqEntry(keyValue[0], CQDecoder.decodeParams(keyValue[1])!!)
+        return KqEntry(keyValue[0], CQDecoder.decodeParams(keyValue[1]))
     }
 
 }

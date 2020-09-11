@@ -181,7 +181,7 @@ object MQCodeUtils {
             return arrayOf()
         }
 
-        var ti = 0
+        var ti: Int
         var e = 0
         val het = MQ_HEAD + type
         val ent = MQ_END

@@ -171,7 +171,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
                     // 参数解码
                     val map = split.subList(1, split.size).map {
                         val sp = it.split(Regex("="), 2)
-                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                        sp[0] to CQDecoder.decodeParams(sp[1])
                     }.toMap()
                     MapKQCode(map, type)
                 } else {
@@ -205,7 +205,7 @@ internal constructor(open val params: Map<String, String>, override var type: St
                     // 参数解码
                     val map: MutableMap<String, String> = split.subList(1, split.size).map {
                         val sp = it.split(Regex("="), 2)
-                        sp[0] to (CQDecoder.decodeParams(sp[1]) ?: "")
+                        sp[0] to CQDecoder.decodeParams(sp[1])
                     }.toMap().toMutableMap()
                     MutableMapKQCode(map, type)
                 } else {
