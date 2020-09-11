@@ -21,7 +21,7 @@
 
         <mirai.version>1.2.2</mirai.version>
 
-        <kotlin.version>1.4.0</kotlin.version>
+        <kotlin.version>1.4.10</kotlin.version>
         <kotlinx-serialization.version>1.0.0-RC</kotlinx-serialization.version>
     </properties>
 
