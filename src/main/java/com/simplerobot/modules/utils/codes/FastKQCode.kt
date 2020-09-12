@@ -61,7 +61,9 @@ open class FastKQCode private constructor(private val code: String) : KQCode {
         // get type from string
         startIndex = CQ_HEAD.length
         endIndex = this.code.lastIndex
-        val firstSplitIndex: Int = this.code.indexOf(CQ_SPLIT, startIndex)
+        val firstSplitIndex: Int = this.code.indexOf(CQ_SPLIT, startIndex).let {
+            if(it < 0) endIndex else it
+        }
         // val typeEndIndex = if (firstSplitIndex < 0) _codeText.length else firstSplitIndex
         _type = this.code.substring(startIndex, firstSplitIndex)
         cqHead = CQ_HEAD + _type

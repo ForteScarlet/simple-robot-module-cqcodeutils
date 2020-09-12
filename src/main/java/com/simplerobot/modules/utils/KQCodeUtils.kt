@@ -189,7 +189,7 @@ object KQCodeUtils {
     @JvmOverloads
     fun toCq(type: String, encode: Boolean = true, vararg params: String): String {
         // 如果参数为空
-        return if (params.isNotEmpty() && encode) {
+        return if (params.isNotEmpty()) {
             if (encode) {
                 toCq(type, encode, *params.map {
                     val split: List<String> = it.split(CQ_SPLIT_REGEX, 2)
