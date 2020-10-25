@@ -79,6 +79,7 @@ open class FastKQCode private constructor(private val code: String) : KQCode {
     override val size: Int = _size
     override val type: String = _type
 
+
     /**
      * 获取转义前的值。一般普通的[get]方法得到的是反转义后的。
      * 此处为保留原本的值不做转义。

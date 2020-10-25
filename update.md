@@ -1,3 +1,7 @@
+# now
+- 修复decoder中的bug。
+- decoder与encoder中追加对`\r`,`\n`,`\t`的编码与解码。
+
 # 1.8.1
 - 修复`FastKQCode`解析没有参数的CQ码会索引越界的问题。
 - 修复`KQCodeUtils.toCq`如果`encode=false`会导致没有参数的问题。

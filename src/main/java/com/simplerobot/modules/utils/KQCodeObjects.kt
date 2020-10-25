@@ -13,7 +13,7 @@
  *
  *
  */
-
+@file:JvmName("KQCodeObjects")
 package com.simplerobot.modules.utils
 
 import com.simplerobot.modules.utils.codes.FastKQCode
@@ -23,18 +23,28 @@ import com.simplerobot.modules.utils.codes.MapKQCode
     提供一些可以作为单例使用的[KQCode]实例
  */
 
+
+// private val AtAllKQ = FastKQCode.byCode("[CQ:at,code=all]")
 /**
  * at all
- * `[CQ:at,qq=all]`
+ * `[CQ:at,code=all]`
  */
-object AtAll : KQCode by FastKQCode.byCode("[CQ:at,qq=all]")
+val AtAll: KQCode = FastKQCode.byCode("[CQ:at,code=all]")
+// {
+//     override fun toString(): String = AtAllKQ.toString()
+//     override fun hashCode(): Int = AtAllKQ.hashCode()
+// }
+// object AtAll : KQCode = AtAllKQ {
+//     override fun toString(): String = AtAllKQ.toString()
+//     override fun hashCode(): Int = AtAllKQ.hashCode()
+// }
 
 /**
  * rps 猜拳
  * 发送用的猜拳
  * `[CQ:rps]`
  */
-object Rps : KQCode by EmptyKQCode("rps")
+val Rps : KQCode = EmptyKQCode("rps")
 
 
 /**
@@ -42,14 +52,14 @@ object Rps : KQCode by EmptyKQCode("rps")
  * 发送用的骰子
  * `[CQ:dice]`
  */
-object Dice : KQCode by EmptyKQCode("dice")
+val Dice : KQCode = EmptyKQCode("dice")
 
 
 /**
  * 窗口抖动，戳一戳
  * `[CQ:shake]`
  */
-object Shake : KQCode by EmptyKQCode("shake")
+val Shake : KQCode = EmptyKQCode("shake")
 
 /**
  * 匿名消息
@@ -67,18 +77,18 @@ object Shake : KQCode by EmptyKQCode("shake")
  * @see AnonymousCompulsory
  *
  */
-object Anonymous : KQCode by FastKQCode.byCode("[CQ:anonymous,ignore=true]")
+val Anonymous : KQCode = FastKQCode.byCode("[CQ:anonymous,ignore=true]")
 
 /**
  * ignore参数为false的[Anonymous]
  */
-object AnonymousNoIgnore : KQCode by FastKQCode.byCode("[CQ:anonymous,ignore=false]")
+val AnonymousNoIgnore : KQCode = FastKQCode.byCode("[CQ:anonymous,ignore=false]")
 
 /**
  * 强制的匿名CQ码
  * @see Anonymous
  */
-object AnonymousCompulsory : KQCode by EmptyKQCode("[CQ:anonymous]")
+val AnonymousCompulsory : KQCode = EmptyKQCode("[CQ:anonymous]")
 
 
 

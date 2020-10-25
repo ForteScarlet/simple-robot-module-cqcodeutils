@@ -45,20 +45,26 @@ object CQDecoder {
 
     /** 非CQ码文本消息解义 */
     fun decodeText(str: String): String =
-        str.replace("&amp;", "&")
-            .replace("&#91;", "[")
+        str.replace("&#91;", "[")
             .replace("&#93;", "]")
+            .replace("&#09;", "\t")
+            .replace("&#10;", "\r")
+            .replace("&#13;", "\n")
+            .replace("&amp;", "&")
 
     /** 非CQ码文本消息解义，如果[str]为null则返回null */
-    fun decodeTextOrNull(str: String?) : String? = str?.let { decodeText(it) }
+    fun decodeTextOrNull(str: String?): String? = str?.let { decodeText(it) }
 
 
     /** CQ码参数值消息解义 */
     fun decodeParams(str: String): String =
-        str.replace("&amp;", "&")
-            .replace("&#91;", "[")
+        str.replace("&#91;", "[")
             .replace("&#93;", "]")
             .replace("&#44;", ",")
+            .replace("&#09;", "\t")
+            .replace("&#10;", "\r")
+            .replace("&#13;", "\n")
+            .replace("&amp;", "&")
 
     /** CQ码参数值消息解义，如果[str]为null则返回null */
     fun decodeParamsOrNull(str: String?): String? = str?.let { decodeParams(it) }
@@ -78,6 +84,9 @@ object CQEncoder {
         str.replace("&", "&amp;")
             .replace("[", "&#91;")
             .replace("]", "&#93;")
+            .replace("\t", "&#09;")
+            .replace("\r", "&#10;")
+            .replace("\n", "&#13;")
 
     /** 非CQ码文本消息转义。如果[str]为null则返回null */
     fun encodeTextOrNull(str: String?): String? = str?.let { encodeText(it) }
@@ -87,7 +96,9 @@ object CQEncoder {
         str.replace("&", "&amp;")
             .replace("[", "&#91;")
             .replace("]", "&#93;")
-            .replace(",", "&#44;")
+            .replace("\t", "&#09;")
+            .replace("\r", "&#10;")
+            .replace("\n", "&#13;")
 
     /** CQ码参数值消息转义。如果[str]为null则返回null */
     fun encodeParamsOrNull(str: String?): String? = str?.let { encodeParams(it) }
